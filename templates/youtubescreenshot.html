@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Get Screenshots from YouTube Videos</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/jquery.js"></script>
+    <style>
+        .jumbotron {
+               text-align: right;
+        }
+        .jumbotron h1 {
+            font-size: 60px;
+            color:#379886;
+        }
+        .jumbotron input {
+            font-size: 21px;
+        }
+        <!--.btn:last-child {-->
+            <!-- -webkit-border-radius: 0 4px 4px 0;-->
+            <!-- -moz-border-radius: 0 4px 4px 0;-->
+            <!--border-radius: 0 4px 4px 0;-->
+        <!--}-->
+        .jumbotron .btn {
+            font-size: 21px;
+            padding: 14px 24px;
+        }
+        input:focus{
+            outline: none;
+        }
+        .input-append  {
+            background-color:#FFFFFF;
+            border-radius:50px;
+            padding:10px;
+        }
+        .input-append-inner {
+            background-color:#f1f1f1;
+            border-radius:50px;
+        }
+        .input-append-inner input{
+ background-color:#f1f1f1;
+            border-radius:50px;
+        }
+
+
+        .thumbnails {
+            list-style: none;
+            margin-left: 0;
+        }
+        ol, ul {
+            padding: 0;
+            margin: 0 0 10px 25px;
+        }
+        .row-fluid [class*=span] {
+            display: block;
+            float: left;
+            width: 100%;
+            min-height: 30px;
+            margin-left: 2.127659574468085%;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        .row-fluid .span3 {
+            width: 21.404255319148934%;
+        }
+        .headerBar{
+           background-color:#204a65;
+           margin-bottom:0px;
+        }
+        .takearea{
+           background-image: url(/img/upbg.jpg);
+        }
+        .mycontainer{
+            padding-right: 0px;
+            padding-left: 0px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .showbtn{
+            border-top-right-radius:50px;
+            border-bottom-right-radius:50px;
+            margin-left: 5px;
+        }
+
+        .titile{
+            text-align:center;
+        }
+        video {
+            width: 100%;
+            max-width: 1920px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default headerBar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+
+    </div>
+  </div>
+</nav>
+<div class="container-fluid mycontainer">
+    <div class="row jumbotron takearea">
+        <p class="titile" style="font-size: 60px;color:#379886;" >SCREENSHOTS</p>
+        <h1 class="titile" style="font-size:100px;color:#204a65">from YouTube Video</h1>
+        <p class="titile" style="font-size:30px;">Ever wonder how to get screenshots / thumbnails from a YouTube</p>
+        <div class="row">
+            <div class="col-xs-2 col-sm-2 col-md-2"></div>
+            <div class="col-xs-8 col-sm-8 col-md-8"><div class="input-append"><div class="input-append-inner"><input id="videourl" class="" style="border:0;height:60px;margin-right: 5px;width:60%" type="text" placeholder="http://www.youtube.com/watch?v="><button class="btn btn-success pull-right showbtn" id="url-submit" type="button">Show screenshots</button></div></div></div>
+            <div class="col-xs-2 col-sm-2 col-md-2"></div>
+        </div>
+        <p class="titile" style="font-family: 'Helvetica Neue,Helvetica,Arial,sans-serif';font-size:14px;color:#333333;margin-top:10px;font-weight:bold;">Example: https://www.youtube.com/watch?v=rBJ2OSWFKkA</p>
+    </div>
+    <div class="row-fluid thumbnailsdiv" style="display:none;">
+            <ul class="thumbnails">
+                <li class="ss0 span3">
+                    <div class="thumbnail">
+                        <img class="span12"  alt="">
+                        <h3>Normal quality</h3>
+                        <p>Size: 480x360. <br>
+                        Right click to save as</p>
+                    </div>
+                </li>
+                <li class="ss1 span3">
+                    <div class="thumbnail">
+                        <img class="span12"  alt="">
+                        <h3>Thumbnail quality</h3>
+                        <p>Size: 120x90. <br>
+                            Right click to save as</p>
+                    </div>
+                </li>
+                <li class="ss2 span3">
+                    <div class="thumbnail">
+                        <img class="span12"  alt="">
+                        <h3>Thumbnail quality</h3>
+                        <p>Size: 120x90. <br>
+                        Right click to save as</p>
+                    </div>
+                </li>
+                <li class="ss3 span3">
+                    <div class="thumbnail">
+                        <img class="span12"  alt="">
+                        <h3>Thumbnail quality</h3>
+                        <p>Size: 120x90. <br>
+                        Right click to save as</p>
+                    </div>
+                </li>
+            </ul>
+    </div>
+    <div class="row ">
+        <div class="row-fluid videoarea" style="display:none">
+            <div id="ytvideo" style="margin:20px;">
+                <video id="vid"  controls="controls" ></video>
+            </div>
+            <div class="row text-center"><button class="btn btn-success btn-large" id="snap" type="button">Take Screenshot</button></div>
+        </div>
+        <div class="row screenshotsarea" style="display:none;">
+            <div id="resolution" style="">
+                <div class="col-sm-4 col-md-4"></div >
+                <div class="col-sm-4 col-md-4">
+                    <form >
+                        <div>
+                            <label for="exampleInputEmail1">Width</label>
+                            <input type="text" class="form-control" id="resizeWidth" placeholder="Width">
+                        </div>
+                        <div>
+                            <label for="exampleInputEmail1">Height</label>
+                            <input type="text" class="form-control" id="resizeHeight" placeholder="Height">
+                        </div>
+                        <div>(* leave empty to keep aspect ratio)</div>
+                        <div style="text-align:center;">
+                            <button type="button" id="resize" class="btn btn-default ">Resize</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-4 col-md-4"></div>
+            </div>
+        </div>
+        <div class="row">
+            <canvas id="canvas" style="display:none"></canvas>
+
+        </div>
+    </div>
+    <hr>
+
+
+</div>
+</body>
+<script>
+    function parseURL(url) {
+        var parser = document.createElement('a'),
+            searchObject = {},
+            queries, split, i;
+        // Let the browser do the work
+        parser.href = url;
+        // Convert query string to object
+        queries = parser.search.replace(/^\?/, '').split('&');
+        for( i = 0; i < queries.length; i++ ) {
+            split = queries[i].split('=');
+            searchObject[split[0]] = split[1];
+        }
+        return {
+            protocol: parser.protocol,
+            host: parser.host,
+            hostname: parser.hostname,
+            port: parser.port,
+            pathname: parser.pathname,
+            search: parser.search,
+            searchObject: searchObject,
+            hash: parser.hash
+        };
+    }
+    var vo = document.getElementById("vid");;
+    var aspectRatio;
+    var targetWidth;
+    var targetHeight;
+    var resizeWidth;
+    var resizeHeight;
+    var canvas = document.getElementById("canvas");
+    $(document).ready(function(){
+        $('.showbtn').click(function(e){
+            var videoUrl = $('#videourl').val();
+            var videoId = parseURL(videoUrl).searchObject.v
+            var imgObjs = ($(".thumbnails").find("img"))
+            for(var i=0;i<imgObjs.length;i++)
+            {
+                var imgObj =imgObjs[i];
+                var url = "http://img.youtube.com/vi/"+videoId+"/"+i+".jpg";
+                imgObj.src = url;
+                var img = new Image();
+                img.onload = function(){
+                   console.log('Size: '+this.width+"x"+this.height+".");
+                   $(imgObj).next('p').text('Size: '+this.width+"x"+this.height+".");
+                };
+                img.src = url;
+
+            }
+            $('.thumbnailsdiv').show();
+            $('.videoarea').show();
+            $.ajax({url: "/getVideoUrl?url="+encodeURI(videoUrl)}).done(function(res) {
+
+                vurl = res.res ;
+                console.log(res);
+                console.log(vurl);
+                $('#ytvideo video').attr('src',vurl);
+                $('#ytvideo video').get(0).addEventListener("loadedmetadata",function(){
+                     aspectRatio = vo.videoWidth/vo.videoHeight;
+                     targetWidth = vo.videoWidth;
+                     targetHeight = parseInt(targetWidth/aspectRatio,10);
+                     canvas.width = targetWidth;
+                     canvas.height = targetHeight;
+                });
+            }).fail(function(){
+
+            });
+        })
+
+        function printScreenshots(){
+            targetWidth = resizeWidth || targetWidth;
+            targetHeight = resizeHeight || targetHeight
+            $('#resizeWidth').val(targetWidth);
+            $('#resizeHeight').val(targetHeight);
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            $('#canvas').show();
+            var context = canvas.getContext("2d");
+            context.fillRect(0,0,targetWidth,targetHeight);
+            context.drawImage(vo,0,0,targetWidth,targetHeight);
+            $(".screenshotsarea").show();
+        }
+
+        $('#snap').bind('click',function(){
+            printScreenshots();
+        });
+
+        $('#resize').bind('click',function(){
+        debugger;
+            var tempW = parseInt($('#resizeWidth').val(),10);
+            var tempH = parseInt($('#resizeHeight').val(),10);
+            if(tempH<=0)
+            {
+            console.log(1);
+            }else{
+            console.log(2);
+            }
+            if(tempW > 0 && tempH > 0)
+            {
+                resizeWidth = tempW;
+                resizeHeight = tempH;
+            }else if(tempW > 0 && (!tempH || tempH <=0) )
+            {
+                tempH = parseInt(tempW/aspectRatio);
+                resizeWidth = tempW;
+                resizeHeight = tempH;
+            }else if(tempH > 0 && (!tempW || tempW <=0) ){
+                tempW = parseInt(tempH*aspectRatio);
+                resizeWidth = tempW;
+                resizeHeight = tempH;
+            }else{
+                resizeWidth = targetWidth;
+                resizeHeight = targetHeight;
+            }
+            $('#resizeWidth').val(resizeWidth);
+            $('#resizeHeight').val(resizeHeight);
+            printScreenshots();
+        });
+
+
+
+    })
+
+</script>
+</html>
