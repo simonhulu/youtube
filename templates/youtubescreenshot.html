@@ -238,13 +238,6 @@
 
             }
 
-            $.ajax({url:'http://www.youtube.com/get_video_info?&video_id=6ychdzz6UEA&el=info&ps=default&eurl=&gl=US&hl=en'})
-            .done(function(res){
-            console.log(res);
-            })
-            .fail(function(res){
-            console.log(res);
-            })
             $('.thumbnailsdiv').show();
             $('.videoarea').show();
             $.ajax({url: "/getVideoUrl?url="+encodeURI(videoUrl)}).done(function(res) {
