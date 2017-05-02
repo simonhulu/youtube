@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="HoNlJIPq-pbzq2JOQlwHKphhxIRJVVAwW80ypqEA4hA" />
+    <meta name="description" content="get screenshots/thumbnails from youtube video link" />
+    <meta content="youtube,screenshot,video download,youtube download,free,capture screenshot,take screenshot" name="Keywords">
     <title>Get Screenshots from YouTube Videos</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <script src="/js/jquery.js"></script>
@@ -228,7 +230,13 @@
     $(document).ready(function(){
         $('.showbtn').click(function(e){
             var videoUrl = $('#videourl').val();
+
             var videoId = parseURL(videoUrl).searchObject.v
+            if(videoId == "" || !videoId)
+            {
+                alert("Invalid youtube link");
+                return;
+            }
             var imgObjs = ($(".thumbnails").find("img"))
             for(var i=0;i<imgObjs.length;i++)
             {
