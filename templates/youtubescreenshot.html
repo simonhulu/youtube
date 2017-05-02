@@ -234,6 +234,14 @@
                 var imgObj =imgObjs[i];
                 var url = "http://img.youtube.com/vi/"+videoId+"/"+i+".jpg";
                 imgObj.src = url;
+                switch(i){
+                case 0:
+                    imgObj.alt="hqdefault.jpg";
+                break;
+                default:
+                imgObj.alt="thumbnail_"+i+".jpg";
+                break;
+                }
                 var img = new Image();
                 img.onload = function(){
                    console.log('Size: '+this.width+"x"+this.height+".");
