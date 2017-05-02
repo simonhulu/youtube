@@ -38,11 +38,9 @@
             border-radius:50px;
         }
         .input-append-inner input{
- background-color:#f1f1f1;
+            background-color:#f1f1f1;
             border-radius:50px;
         }
-
-
         .thumbnails {
             list-style: none;
             margin-left: 0;
@@ -80,7 +78,6 @@
         .showbtn{
             border-top-right-radius:50px;
             border-bottom-right-radius:50px;
-            margin-left: 5px;
         }
 
         .titile{
@@ -108,7 +105,15 @@
         <p class="titile" style="font-size:30px;">Ever wonder how to get screenshots / thumbnails from a YouTube</p>
         <div class="row">
             <div class="col-xs-2 col-sm-2 col-md-2"></div>
-            <div class="col-xs-8 col-sm-8 col-md-8"><div class="input-append"><div class="input-append-inner"><input id="videourl" class="" style="border:0;height:60px;margin-right: 5px;width:60%" type="text" placeholder="http://www.youtube.com/watch?v="><button class="btn btn-success pull-right showbtn" id="url-submit" type="button">Show screenshots</button></div></div></div>
+            <div class="col-xs-8 col-sm-8 col-md-8">
+                <div class="input-append">
+                    <div class="input-append-inner">
+                        <!--<div class="col-xs-4 col-sm-4 col-md-4"><input id="videourl" class="" style="border:0;height:60px;margin-right: 5px;" type="text" placeholder="http://www.youtube.com/watch?v="></div>-->
+                        <!--<div class="col-xs-4 col-sm-4 col-md-4 pull-right"><button class="btn btn-success  showbtn" id="url-submit" type="button">Show screenshots</button></div>-->
+                        <input type="text" id="videourl" placeholder="http://www.youtube.com/watch?v=" style="border:0;height:60px;width:60%;"/><button style="width:40%;" class="btn btn-success showbtn" id="url-submit" >Show screenshots</button>
+                    </div>
+                </div>
+            </div>
             <div class="col-xs-2 col-sm-2 col-md-2"></div>
         </div>
         <p class="titile" style="font-family: 'Helvetica Neue,Helvetica,Arial,sans-serif';font-size:14px;color:#333333;margin-top:10px;font-weight:bold;">Example: https://www.youtube.com/watch?v=rBJ2OSWFKkA</p>
@@ -237,7 +242,6 @@
                 img.src = url;
 
             }
-
             $('.thumbnailsdiv').show();
             $('.videoarea').show();
             $.ajax({url: "/getVideoUrl?url="+encodeURI(videoUrl)}).done(function(res) {
