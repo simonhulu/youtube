@@ -14,9 +14,9 @@ def hello_world():
 def getVideoUrl():
 
     youtubeUrl = request.args.get('url');
-    ydl_opts = { "proxy": "socks5://127.0.0.1:1080/" }
     url = "";
     imeilires = Imeili100Result()
+    ydl_opts = {"source-address":"104.154.23.74"}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.add_default_info_extractors()
         res = ydl.extract_info(youtubeUrl, False)
@@ -33,5 +33,5 @@ def about():
     return 'The about page'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
 
