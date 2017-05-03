@@ -16,8 +16,7 @@ def getVideoUrl():
     youtubeUrl = request.args.get('url');
     url = "";
     imeilires = Imeili100Result()
-    ydl_opts = {"source-address":"104.154.23.74"}
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    with youtube_dl.YoutubeDL() as ydl:
         ydl.add_default_info_extractors()
         res = ydl.extract_info(youtubeUrl, False)
         formats = res['formats'];
