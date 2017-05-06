@@ -1,0 +1,108 @@
+ 2017-05-04 14:01:07 Debug: Proxy App name is ShadowsocksX, hash 1650300449
+ 2017-05-04 14:01:10 Warning: server_accept_cb 6dc02300 12
+ 2017-05-04 14:01:10 Debug: negotiate successfully!
+ 2017-05-04 14:01:10 Debug: socks5 server works
+ 2017-05-04 14:01:11 Warning: final_after_close_cb
+ 2017-05-04 14:01:12 Warning: server_accept_cb 6dd011e0 12
+ 2017-05-04 14:01:12 Debug: negotiate successfully!
+ 2017-05-04 14:01:12 Debug: socks5 server works
+ 2017-05-04 14:01:31 Warning: server_accept_cb 6dc02870 12
+ 2017-05-04 14:01:31 Debug: negotiate successfully!
+ 2017-05-04 14:01:31 Debug: socks5 server works
+ 2017-05-04 14:01:45 Warning: server_accept_cb 6de000e0 12
+ 2017-05-04 14:01:45 Debug: negotiate successfully!
+ 2017-05-04 14:01:45 Debug: socks5 server works
+ 2017-05-04 14:01:46 Warning: server_accept_cb 6df000f0 12
+ 2017-05-04 14:01:46 Warning: server_accept_cb 6df00490 12
+ 2017-05-04 14:01:46 Warning: server_accept_cb 6df00830 12
+ 2017-05-04 14:01:46 Warning: server_accept_cb 6df00bd0 12
+ 2017-05-04 14:01:46 Warning: server_accept_cb 6dc02bb0 12
+ 2017-05-04 14:01:46 Warning: server_accept_cb 6dc02ef0 12
+ 2017-05-04 14:01:46 Debug: negotiate successfully!
+ 2017-05-04 14:01:46 Debug: socks5 server works
+ 2017-05-04 14:01:46 Debug: negotiate successfully!
+ 2017-05-04 14:01:46 Debug: socks5 server works
+ 2017-05-04 14:01:46 Debug: negotiate successfully!
+ 2017-05-04 14:01:46 Debug: socks5 server works
+ 2017-05-04 14:01:46 Debug: negotiate successfully!
+ 2017-05-04 14:01:46 Debug: socks5 server works
+ 2017-05-04 14:01:46 Debug: negotiate successfully!
+ 2017-05-04 14:01:46 Debug: socks5 server works
+ 2017-05-04 14:01:46 Warning: server_accept_cb 6de00640 12
+ 2017-05-04 14:01:47 Debug: negotiate successfully!
+ 2017-05-04 14:01:47 Debug: socks5 server works
+ 2017-05-04 14:01:48 Debug: negotiate successfully!
+ 2017-05-04 14:01:48 Debug: socks5 server works
+ 2017-05-04 14:02:11 Warning: final_after_close_cb
+ 2017-05-04 14:02:12 Warning: final_after_close_cb
+ 2017-05-04 14:02:15 Warning: server_accept_cb 6de009e0 12
+ 2017-05-04 14:02:15 Debug: negotiate successfully!
+ 2017-05-04 14:02:15 Debug: socks5 server works
+ 2017-05-04 14:02:16 Warning: final_after_close_cb
+ 2017-05-04 14:02:16 Warning: final_after_close_cb
+ 2017-05-04 14:02:16 Warning: final_after_close_cb
+ 2017-05-04 14:02:16 Warning: server_accept_cb 6de000d0 12
+ 2017-05-04 14:02:16 Debug: negotiate successfully!
+ 2017-05-04 14:02:17 Debug: socks5 server works
+ 2017-05-04 14:02:17 Warning: final_after_close_cb
+ 2017-05-04 14:02:17 Warning: final_after_close_cb
+ 2017-05-04 14:02:17 Warning: final_after_close_cb
+ 2017-05-04 14:02:17 Warning: final_after_close_cb
+ 2017-05-04 14:02:25 Warning: server_accept_cb 6de00de0 12
+ 2017-05-04 14:02:25 Warning: server_accept_cb 6df00490 12
+ 2017-05-04 14:02:25 Debug: negotiate successfully!
+ 2017-05-04 14:02:25 Debug: socks5 server works
+ 2017-05-04 14:02:25 Debug: negotiate successfully!
+ 2017-05-04 14:02:25 Debug: socks5 server works
+ 2017-05-04 14:02:26 Warning: server_accept_cb 6dd01860 12
+ 2017-05-04 14:02:26 Warning: server_accept_cb 6dd01ba0 12
+ 2017-05-04 14:02:26 Debug: negotiate successfully!
+ 2017-05-04 14:02:26 Debug: socks5 server works
+ 2017-05-04 14:02:26 Debug: negotiate successfully!
+ 2017-05-04 14:02:26 Debug: socks5 server works
+ 2017-05-04 14:02:27 Warning: server_accept_cb 6de01340 12
+ 2017-05-04 14:02:27 Debug: negotiate successfully!
+ 2017-05-04 14:02:27 Debug: socks5 server works
+ 2017-05-04 14:02:28 Warning: server_accept_cb 6dd01ee0 12
+ 2017-05-04 14:02:28 Warning: server_accept_cb 6dd02280 12
+ 2017-05-04 14:02:28 Debug: negotiate successfully!
+ 2017-05-04 14:02:28 Debug: socks5 server works
+ 2017-05-04 14:02:28 Debug: negotiate successfully!
+ 2017-05-04 14:02:28 Debug: socks5 server works
+ 2017-05-04 14:02:42 Warning: server_accept_cb 6df00bd0 12
+ 2017-05-04 14:02:42 Debug: negotiate successfully!
+ 2017-05-04 14:02:42 Debug: socks5 server works
+ 2017-05-04 14:02:54 Warning: server_accept_cb 6df000d0 12
+ 2017-05-04 14:02:54 Debug: negotiate successfully!
+ 2017-05-04 14:02:54 Debug: socks5 server works
+ 2017-05-04 14:02:55 Warning: final_after_close_cb
+ 2017-05-04 14:02:55 Warning: server_accept_cb 6dd02830 12
+ 2017-05-04 14:02:55 Debug: negotiate successfully!
+ 2017-05-04 14:02:55 Debug: socks5 server works
+ 2017-05-04 14:02:56 Warning: final_after_close_cb
+ 2017-05-04 14:02:56 Warning: server_accept_cb 6de00de0 12
+ 2017-05-04 14:02:56 Warning: final_after_close_cb
+ 2017-05-04 14:02:56 Debug: negotiate successfully!
+ 2017-05-04 14:02:56 Debug: socks5 server works
+ 2017-05-04 14:02:56 Warning: server_accept_cb 6de01680 12
+ 2017-05-04 14:02:56 Warning: server_accept_cb 6dc02bb0 12
+ 2017-05-04 14:02:56 Warning: server_accept_cb 6df01110 12
+ 2017-05-04 14:02:56 Warning: server_accept_cb 6dd01860 12
+ 2017-05-04 14:02:56 Debug: negotiate successfully!
+ 2017-05-04 14:02:56 Debug: socks5 server works
+ 2017-05-04 14:02:56 Debug: negotiate successfully!
+ 2017-05-04 14:02:56 Debug: socks5 server works
+ 2017-05-04 14:02:56 Debug: negotiate successfully!
+ 2017-05-04 14:02:56 Debug: socks5 server works
+ 2017-05-04 14:02:56 Debug: negotiate successfully!
+ 2017-05-04 14:02:56 Debug: socks5 server works
+ 2017-05-04 14:02:57 Warning: final_after_close_cb
+ 2017-05-04 14:02:57 Warning: final_after_close_cb
+ 2017-05-04 14:02:58 Warning: final_after_close_cb
+ 2017-05-04 14:02:58 Warning: final_after_close_cb
+ 2017-05-04 14:03:02 Warning: server_accept_cb 6df01520 12
+ 2017-05-04 14:03:02 Warning: server_accept_cb 6dd02280 12
+ 2017-05-04 14:03:02 Debug: negotiate successfully!
+ 2017-05-04 14:03:02 Debug: socks5 server works
+ 2017-05-04 14:03:02 Debug: negotiate successfully!
+ 2017-05-04 14:03:02 Debug: socks5 server works
