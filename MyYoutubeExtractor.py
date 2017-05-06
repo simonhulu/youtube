@@ -1468,7 +1468,7 @@ class MyYoutubeExtractor(InfoExtractor):
         return dic
     def bestVideo(self,url):
         dic = self.extractVideo(url);
-        vdic = dic['formats'][0];
+        vdic = dic['formats'][-1];
         return vdic['url']
 
 

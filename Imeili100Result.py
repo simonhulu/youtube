@@ -6,7 +6,7 @@ class Imeili100ResultStatus(Enum):
 
 class Imeili100Result():
     def __init__(self):
-        self.status = Imeili100ResultStatus.ok.value
+        self.status = Imeili100ResultStatus.ok
         self.res = None
 
 

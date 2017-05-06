@@ -53,7 +53,7 @@ if __name__ == '__main__':
             ydl.add_default_info_extractors()
             res = ydl.extract_info(url, False)
     else:
-        dic =  extractor.real_extractor(url)
+        dic =  extractor.bestVideo(url)
         print(dic)
 
 

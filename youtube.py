@@ -42,15 +42,13 @@ def getVideoUrl():
     print(youtubeUrl)
     imeilires = Imeili100Result()
     vurl = extractor.bestVideo(youtubeUrl)
-    imeilires.status = Imeili100ResultStatus.ok.value
+    imeilires.status = Imeili100ResultStatus.ok
     imeilires.res = vurl;
     print(vurl)
     return jsonify(imeilires.__dict__)
 
 
-@app.route('/projects')
-def about():
-    return 'The about page'
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
