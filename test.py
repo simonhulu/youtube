@@ -19,6 +19,8 @@ from selenium.common.exceptions import  *
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from MyYoutubeExtractor import MyYoutubeExtractor
+from fake_useragent import UserAgent
+import requests
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -45,13 +47,21 @@ if __name__ == '__main__':
     youtubeie = YoutubeIE();
     url = "https://www.youtube.com/watch?v=rBJ2OSWFKkA";
     video_id = "rBJ2OSWFKkA";
-    test = False
+    test = True
     if test:
-        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, '127.0.0.1', 1080)
-        socket.socket = socks.socksocket
-        with youtube_dl.YoutubeDL() as ydl:
-            ydl.add_default_info_extractors()
-            res = ydl.extract_info(url, False)
+        # socks.setdefaultproxy(socks.PROXY_TYPE_HTTP, '127.0.0.1', 50166)
+        # socket.socket = socks.socksocket
+        # with youtube_dl.YoutubeDL() as ydl:
+        #     ydl.add_default_info_extractors()
+        #     res = ydl.extract_info(url, False)
+        # import mechanize
+        #
+        # br = mechanize.Browser()
+        # resp = br.open("http://www.google.com")
+        # print resp.info()  # headers
+        # print resp.read()  # content
+        dic = extractor.bestVideo(url)
+        print(dic)
     else:
         dic =  extractor.bestVideo(url)
         print(dic)

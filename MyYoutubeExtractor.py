@@ -18,6 +18,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import  *
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
+from fake_useragent import UserAgent
+import requests
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -767,9 +769,12 @@ class MyYoutubeExtractor(InfoExtractor):
         return video_id
 
     def downloadpage(self,url):
-        self.driver.get(url);
-        webcontent = self.driver.page_source
-        return webcontent;
+        tt = urllib2.urlopen(url)
+        ua = UserAgent()
+        header = {'User-Agent':str(ua.ie)}
+        webcontent = requests.get(url,header,verify=True)
+        webcontent.raise_for_status()
+        return webcontent.text ;
     def _html_search_meta(self, name, html, display_name=None, fatal=False, **kwargs):
         if not isinstance(name, (list, tuple)):
             name = [name]
