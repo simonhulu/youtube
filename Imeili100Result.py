@@ -1,6 +1,6 @@
 
-from enum import Enum
-class Imeili100ResultStatus(Enum):
+from enum import IntEnum
+class Imeili100ResultStatus(IntEnum):
         ok,failed = range(2)
 
 

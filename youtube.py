@@ -13,6 +13,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from MyYoutubeExtractor import MyYoutubeExtractor
 import re
+
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -42,7 +43,7 @@ def getVideoUrl():
     print(youtubeUrl)
     imeilires = Imeili100Result()
     vurl = extractor.bestVideo(youtubeUrl)
-    imeilires.status = Imeili100ResultStatus.ok
+    imeilires.status = int(Imeili100ResultStatus.ok)
     imeilires.res = vurl;
     print(vurl)
     return jsonify(imeilires.__dict__)
