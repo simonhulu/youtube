@@ -769,7 +769,10 @@ class MyYoutubeExtractor(InfoExtractor):
         return video_id
 
     def downloadpage(self,url):
-        tt = urllib2.urlopen(url)
+        # tt = urllib2.urlopen(url)
+        # Configuration
+
+
         ua = UserAgent()
         header = {'User-Agent':str(ua.ie)}
         webcontent = requests.get(url,header,verify=True)

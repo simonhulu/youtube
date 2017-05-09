@@ -49,8 +49,6 @@ if __name__ == '__main__':
     video_id = "rBJ2OSWFKkA";
     test = True
     if test:
-        # socks.setdefaultproxy(socks.PROXY_TYPE_HTTP, '127.0.0.1', 50166)
-        # socket.socket = socks.socksocket
         # with youtube_dl.YoutubeDL() as ydl:
         #     ydl.add_default_info_extractors()
         #     res = ydl.extract_info(url, False)
