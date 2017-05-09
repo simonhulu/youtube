@@ -25,12 +25,11 @@ service_args = [
     '--proxy=127.0.0.1:1080',
     '--proxy-type=socks5',
     ]
-firefox_capabilities = DesiredCapabilities.CHROME
-firefox_capabilities['marionette'] = True
-driver = webdriver.PhantomJS(executable_path='/usr/local/bin/phantomjs')
+# firefox_capabilities = DesiredCapabilities.CHROME
+# firefox_capabilities['marionette'] = True
+# driver = webdriver.PhantomJS(executable_path='/usr/local/bin/phantomjs')
 # driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver',service_args=service_args)
-driver.set_window_size(1920, 1080)
-extractor = MyYoutubeExtractor(driver=driver);
+extractor = MyYoutubeExtractor();
 @app.route('/')
 def hello_world():
     return render_template('youtubescreenshot.html')

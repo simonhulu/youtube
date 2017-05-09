@@ -748,8 +748,8 @@ class MyYoutubeExtractor(InfoExtractor):
         },
     ]
 
-    def __init__(self,driver):
-        self.driver = driver ;
+    def __init__(self):
+        pass
 
 
     def report_rtmp_download(self):
