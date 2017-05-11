@@ -771,10 +771,10 @@ class MyYoutubeExtractor(InfoExtractor):
     def downloadpage(self,url):
         # tt = urllib2.urlopen(url)
         # Configuration
-
-
         ua = UserAgent()
         header = {'User-Agent':str(ua.ie)}
+        # proxies = {'http': 'http://127.0.0.1:8118',
+        #            'https': 'https://127.0.0.1:8118'}
         webcontent = requests.get(url,header,verify=True)
         webcontent.raise_for_status()
         return webcontent.text ;

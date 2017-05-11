@@ -13,7 +13,6 @@
     <meta property="og:image"         content="http://www.ccphome.com/img/icon.png" />
     <meta property="fb:app_id" content="1456389634431337"/>
 
-
 </head>
 <body>
 <div id="fb-root"></div>
@@ -74,57 +73,20 @@
 
         <div class="row text-center">
              <p  style="font-family: 'Helvetica Neue,Helvetica,Arial,sans-serif';font-size:14px;color:#333333;margin-top:10px;font-weight:bold;">Example: https://www.youtube.com/watch?v=rBJ2OSWFKkA</p>
-            <div
-  class="fb-like"
-  data-share="true"
-  data-width="450"
-  data-show-faces="true">
-</div>
+            <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
         </div>
     </div>
-    <div class="row-fluid thumbnailsdiv" style="display:none;">
-            <ul class="thumbnails">
-                <li class="ss0 span3">
-                    <div class="thumbnail">
-                        <img class="span12"  alt="">
-                        <h3>Normal quality</h3>
-                        <p>Size: 480x360. <br>
-                        Right click to save as</p>
-                    </div>
-                </li>
-                <li class="ss1 span3">
-                    <div class="thumbnail">
-                        <img class="span12"  alt="">
-                        <h3>Thumbnail quality</h3>
-                        <p>Size: 120x90. <br>
-                            Right click to save as</p>
-                    </div>
-                </li>
-                <li class="ss2 span3">
-                    <div class="thumbnail">
-                        <img class="span12"  alt="">
-                        <h3>Thumbnail quality</h3>
-                        <p>Size: 120x90. <br>
-                        Right click to save as</p>
-                    </div>
-                </li>
-                <li class="ss3 span3">
-                    <div class="thumbnail">
-                        <img class="span12"  alt="">
-                        <h3>Thumbnail quality</h3>
-                        <p>Size: 120x90. <br>
-                        Right click to save as</p>
-                    </div>
-                </li>
-            </ul>
-    </div>
-    <div class="row ">
-        <div class="row-fluid videoarea" style="display:none">
-            <div id="ytvideo" style="margin:20px;">
-                <video id="vid"  controls="controls" autoplay="autoplay" ></video>
+
+    <div class="row text-center videodiv" style="padding-bottom: 40px;">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 videoarea " style="display:none">
+            <p style="font-size:35px;color:#204a65;">*NEW* Take a screenshot from custom position</p>
+            <div id="ytvideo" >
+                <video id="vid"  controls preload="auto"   ></video>
             </div>
-            <div class="row text-center"><button class="btn btn-success btn-large" id="snap" type="button">Take Screenshot</button></div>
+            <div class="row text-center"><button class="btn btn-success btn-large" style="background-color:#34a087" id="snap" type="button">Take Screenshots</button></div>
         </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
         <div class="row screenshotsarea" style="display:none;">
             <div id="resolution" style="">
                 <div class="col-sm-4 col-md-4"></div >
@@ -147,17 +109,116 @@
                 <div class="col-sm-4 col-md-4"></div>
             </div>
         </div>
-        <div class="row">
-            <canvas id="canvas" style="display:none"></canvas>
-
-        </div>
     </div>
+
+    <div class="row canvasarea text-center" style="display:none;background-color:#e6e7e8; padding-bottom: 40px;">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                <img id="mainshot" class="img-responsive center-block"/>
+                <canvas id="canvas" class="col-xs-10 col-sm-10 col-md-10 col-lg-10" style="display:none"></canvas>
+                <!--<div class="row-fluid" style="height:100px;background-color:white;">-->
+
+                <!--</div>-->
+                <div class="row thumbnailsdiv thumbnails clearfix" style="display:none;background-color:white;margin-right: 0;padding-bottom: 20px;padding-top: 20px;">
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
+                        <img class=" thumbnailimg" style="width:100%"  alt="">
+                                    <h3>Normal quality</h3>
+                                    <p>Size: 480x360. <br>
+                                    Right click to save as</p>
+                                    <a class="btn btn-default thumbbtn" >
+                                        <img src="/img/thumbnailsD.png"  />
+                                    </a>
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
+                        <img class=" thumbnailimg" style="width:100%"  alt="">
+                                    <h3>Normal quality</h3>
+                                    <p>Size: 480x360. <br>
+                                    Right click to save as</p>
+                                    <a class="btn btn-default thumbbtn" >
+                                        <img src="/img/thumbnailsD.png"  />
+                                    </a></div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
+                        <img class=" thumbnailimg" style="width:100%"  alt="">
+                                    <h3>Normal quality</h3>
+                                    <p>Size: 480x360. <br>
+                                    Right click to save as</p>
+                                    <a class="btn btn-default thumbbtn" >
+                                        <img src="/img/thumbnailsD.png"  />
+                                    </a></div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
+                        <img class=" thumbnailimg" style="width:100%"  alt="">
+                                    <h3>Normal quality</h3>
+                                    <p>Size: 480x360. <br>
+                                    Right click to save as</p>
+                                    <a class="btn btn-default thumbbtn" >
+                                        <img src="/img/thumbnailsD.png"  />
+                                    </a></div>
+                    <!--<div class="span12">-->
+                        <!--<ul class="thumbnails span12" style="margin-left: 0px;">-->
+                            <!--<li class="ss0 span3">-->
+                                <!--<div class="thumbnail">-->
+                                    <!--<img class="span12 thumbnailimg"  alt="">-->
+                                    <!--<h3>Normal quality</h3>-->
+                                    <!--<p>Size: 480x360. <br>-->
+                                    <!--Right click to save as</p>-->
+                                    <!--<a class="btn btn-default thumbbtn" >-->
+                                        <!--<img src="/img/thumbnailsD.png"  />-->
+                                    <!--</a>-->
+                                <!--</div>-->
+                            <!--</li>-->
+                            <!--<li class="ss1 span3">-->
+                                <!--<div class="thumbnail">-->
+                                    <!--<img class="span12 thumbnailimg"  alt="">-->
+                                    <!--<h3>Thumbnail quality</h3>-->
+                                    <!--<p>Size: 120x90. <br>-->
+                                        <!--Right click to save as</p>-->
+                                    <!--<a class="btn btn-default thumbbtn" >-->
+                                        <!--<img src="/img/thumbnailsD.png"  />-->
+                                    <!--</a>-->
+                                <!--</div>-->
+                            <!--</li>-->
+                            <!--<li class="ss2 span3">-->
+                                <!--<div class="thumbnail">-->
+                                    <!--<img class="span12 thumbnailimg"  alt="">-->
+                                    <!--<h3>Thumbnail quality</h3>-->
+                                    <!--<p>Size: 120x90. <br>-->
+                                    <!--Right click to save as</p>-->
+                                    <!--<a class="btn btn-default thumbbtn" >-->
+                                        <!--<img src="/img/thumbnailsD.png"  />-->
+                                    <!--</a>-->
+                                <!--</div>-->
+                            <!--</li>-->
+                            <!--<li class="ss3 span3">-->
+                                <!--<div class="thumbnail">-->
+                                    <!--<img class="span12 thumbnailimg"  alt="">-->
+                                    <!--<h3>Thumbnail quality</h3>-->
+                                    <!--<p>Size: 120x90. <br>-->
+                                    <!--Right click to save as</p>-->
+                                    <!--<a class="btn btn-default thumbbtn" >-->
+                                        <!--<img src="/img/thumbnailsD.png"  />-->
+                                    <!--</a>-->
+                                <!--</div>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</div>-->
+                </div>
+            </div>
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+
+
+    </div>
+
     <hr>
-    <div class="row-fluid text-center"><p>© ccphome.com / tmyk104117@outlook.com</p></div>
+
+
 </div>
+   <footer class="footer">
+        <div class="row-fluid text-center"><p>© ccphome.com / tmyk104117@outlook.com</p></div>
+    </footer>
 </body>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <link href="/css/font-awesome.min.css" rel="stylesheet">
+
 <style>
         .jumbotron {
                text-align: right;
@@ -241,9 +302,26 @@
             max-width: 1920px;
             height: auto;
         }
+        .thumbbtn{
+            padding:0px;
+        }
+        .footer {
+            width: 100%;
+            height: 60px;
+            background-color: #204a65;
+        }
+        <!--img {-->
+            <!--width: auto;-->
+            <!--height: auto;-->
+            <!--max-width: 100%;-->
+            <!--vertical-align: middle;-->
+            <!--border: 0;-->
+            <!-- -ms-interpolation-mode: bicubic;-->
+        <!--}-->
     </style>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+
 <script>
     function parseURL(url) {
         var parser = document.createElement('a'),
@@ -285,12 +363,17 @@
                 alert("Invalid youtube link");
                 return;
             }
-            var imgObjs = ($(".thumbnails").find("img"))
+            $('#mainshot').attr('src',"http://img.youtube.com/vi/"+videoId+"/maxresdefault.jpg")
+            var imgObjs = ($(".thumbnails").find(".thumbnailimg"))
             for(var i=0;i<imgObjs.length;i++)
             {
                 var imgObj =imgObjs[i];
                 var url = "http://img.youtube.com/vi/"+videoId+"/"+i+".jpg";
                 imgObj.src = url;
+                var a = $(imgObj).siblings(".thumbbtn");
+                console.log(a)
+                a.attr("href",url) ;
+                a.attr("download" , "thumbnail.jpg");
                 switch(i){
                 case 0:
                     imgObj.alt="hqdefault.jpg";
@@ -324,6 +407,7 @@
                 });
                 $('.thumbnailsdiv').show();
                 $('.videoarea').show();
+                $('.canvasarea').show();
             }).fail(function(){
                alert("failed");
                $this.button('reset')
