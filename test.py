@@ -36,14 +36,14 @@ service_args = [
     ]
 firefox_capabilities = DesiredCapabilities.CHROME
 firefox_capabilities['marionette'] = True
-driver = webdriver.PhantomJS(executable_path='/usr/local/bin/phantomjs',service_args=service_args)
+# driver = webdriver.PhantomJS(executable_path='/usr/local/bin/phantomjs',service_args=service_args)
 # driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver',service_args=service_args)
-driver.set_window_size(1920, 1080)
+# driver.set_window_size(1920, 1080)
 
 
 
 if __name__ == '__main__':
-    extractor = MyYoutubeExtractor(driver=driver);
+    extractor = MyYoutubeExtractor();
     youtubeie = YoutubeIE();
     url = "https://www.youtube.com/watch?v=rBJ2OSWFKkA";
     video_id = "rBJ2OSWFKkA";
@@ -58,7 +58,8 @@ if __name__ == '__main__':
         # resp = br.open("http://www.google.com")
         # print resp.info()  # headers
         # print resp.read()  # content
-        dic = extractor.bestVideo(url)
+
+        dic = extractor.extractVideo(url)
         print(dic)
     else:
         dic =  extractor.bestVideo(url)

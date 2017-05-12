@@ -41,7 +41,7 @@ def getVideoUrl():
     url = "";
     print(youtubeUrl)
     imeilires = Imeili100Result()
-    vurl = extractor.bestVideo(youtubeUrl)
+    vurl = extractor.extractVideo(youtubeUrl)
     imeilires.status = int(Imeili100ResultStatus.ok)
     imeilires.res = vurl;
     print(vurl)

@@ -747,7 +747,6 @@ class MyYoutubeExtractor(InfoExtractor):
             'only_matching': True,
         },
     ]
-
     def __init__(self):
         pass
 
@@ -773,8 +772,6 @@ class MyYoutubeExtractor(InfoExtractor):
         # Configuration
         ua = UserAgent()
         header = {'User-Agent':str(ua.ie)}
-        # proxies = {'http': 'http://127.0.0.1:8118',
-        #            'https': 'https://127.0.0.1:8118'}
         webcontent = requests.get(url,header,verify=True)
         webcontent.raise_for_status()
         return webcontent.text ;
@@ -1465,11 +1462,15 @@ class MyYoutubeExtractor(InfoExtractor):
     def youtubeformats(self):
         return self._formats;
 
+
     def extractVideo(self,url):
         dic = self.real_extractor(url)
         wformats = []
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
+                url = d['url'];
+                response = requests.head(url)
+                d['filesize'] = response.headers['Content-Length']
                 wformats.append(d)
 
         dic['formats'] = wformats;
