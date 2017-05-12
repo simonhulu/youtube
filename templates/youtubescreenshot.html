@@ -48,27 +48,23 @@
   <div class="container-fluid">
     <!--<div class="navbar-header">-->
       <div class="row">
-        <div class="col-xs-10 col-sm-10 col-md-10"></div>
-          <div class="col-xs-2 col-sm-2 col-md-2" style="padding-top:10px;">
-              <div class="fb-share-button" data-href="http://www.ccphome.com" data-layout="button" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.ccphome.com%2F&amp;src=sdkpreparse">Share</a></div>
-          </div>
+        <div class="col-xs-10 col-sm-12 col-md-2"></div>
+          <div class="col-xs-2 col-sm-2 col-md-2"></div>
       </div>
-
+        <div class="fb-share-button" data-href="http://www.ccphome.com" data-layout="button" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.ccphome.com%2F&amp;src=sdkpreparse">Share</a></div>
     <!--</div>-->
   </div>
 </nav>
 <div class="container-fluid mycontainer">
-    <div class="row-fluid jumbotron takearea">
+    <div class="row-fluid inputearea ">
 
-        <h1 class="titile" style="font-size:100px;color:#204a65"><span class="titile" style="font-size: 60px;color:#379886;" >SCREENSHOTS</span><br>from YouTube Video</h1>
-        <p class="titile" style="font-size:30px;">Get&Grab screenshots / thumbnails from  YouTube Videos online</p>
+        <h1 class="titile" ><span class="titile"  >SCREENSHOTS</span><br>from YouTube Video</h1>
+        <p class="titile subtip" >Get&Grab screenshots / thumbnails from  YouTube Videos online</p>
         <div class="row">
             <div class="col-xs-2 col-sm-2 col-md-2"></div>
             <div class="col-xs-8 col-sm-8 col-md-8">
                 <div class="input-append">
                     <div class="input-append-inner">
-                        <!--<div class="col-xs-4 col-sm-4 col-md-4"><input id="videourl" class="" style="border:0;height:60px;margin-right: 5px;" type="text" placeholder="http://www.youtube.com/watch?v="></div>-->
-                        <!--<div class="col-xs-4 col-sm-4 col-md-4 pull-right"><button class="btn btn-success  showbtn" id="url-submit" type="button">Show screenshots</button></div>-->
                         <input type="text" id="videourl" placeholder="http://www.youtube.com/watch?v=" style="border:0;height:60px;width:60%;"/><button style="width:40%;" class="btn btn-success showbtn" id="url-submit" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Processing" >Show screenshots</button>
                     </div>
                 </div>
@@ -76,24 +72,24 @@
             <div class="col-xs-2 col-sm-2 col-md-2"></div>
         </div>
 
-        <div class="row text-center">
-             <p  style="font-family: 'Helvetica Neue,Helvetica,Arial,sans-serif';font-size:14px;color:#333333;margin-top:10px;font-weight:bold;">Example: https://www.youtube.com/watch?v=rBJ2OSWFKkA</p>
+        <div class="row text-center examplelink">
+             <p  >Example: https://www.youtube.com/watch?v=rBJ2OSWFKkA</p>
             <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
         </div>
     </div>
 
-    <div class="row text-center videodiv" style="padding-bottom: 40px;">
+    <div class="row text-center videodiv" >
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
-        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 videoarea " style="display:none">
-            <p style="font-size:35px;color:#204a65;">*NEW* Take a screenshot from custom position</p>
-            <div id="ytvideo" style="padding-bottom: 40px;">
+        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 videoarea " >
+            <p >*NEW* Take a screenshot from custom position</p>
+            <div class="ytvideo" id="ytvideo" >
                 <video id="vid"  controls preload="auto"   ></video>
             </div>
             <div class="row text-center"><button class="btn btn-success btn-large" style="background-color:#34a087" id="snap" type="button">Take Screenshots</button></div>
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
-        <div class="row screenshotsarea" style="display:none;">
-            <div id="resolution" style="">
+        <div class="row screenshotsarea" >
+            <div id="resolution" >
                 <div class="col-sm-4 col-md-4"></div >
                 <div class="col-sm-4 col-md-4">
                     <form >
@@ -106,7 +102,7 @@
                             <input type="text" class="form-control" id="resizeHeight" placeholder="Height">
                         </div>
                         <div>(* leave empty to keep aspect ratio)</div>
-                        <div style="text-align:center;">
+                        <div >
                             <button type="button" id="resize" class="btn btn-default ">Resize</button>
                         </div>
                     </form>
@@ -116,9 +112,9 @@
         </div>
     </div>
 
-    <div class="row canvasarea text-center" style="display:none;background-color:#e6e7e8; padding-top: 40px;">
-            <p style="font-size:35px;color:#204a65;">High quality YouTube screenshot</p>
-            <p style="font-size:20px;color:#484848;">(if available) Right click to save as</p>
+    <div class="row canvasarea text-center">
+            <p class="canvasareatitleone" >High quality YouTube screenshot</p>
+            <p class="canvasareatitletwo" >(if available) Right click to save as</p>
             <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" ></div>
             <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10" style="padding-top: 20px;">
                 <img id="mainshot" class="img-responsive center-block"/>
@@ -127,44 +123,43 @@
             <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
     </div>
 
-    <div class="row thumbnailsdiv" style="background-color:#e6e7e8;padding-bottom: 40px;display:none">
+    <div class="row thumbnailsdiv" >
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" ></div>
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10" style="padding-top: 20px;">
-            <div class="row  thumbnails clearfix" style="display:none;background-color:white;margin-right: 0;padding-bottom: 20px;padding-top: 20px;">
-                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
-                        <img class=" thumbnailimg" style="width:100%"  alt="">
+            <div class="row  thumbnails clearfix" >
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 thumbnailimgdiv" style="">
+                        <img class=" thumbnailimg"   alt="">
+                        <h3>Normal quality</h3>
+                        <p>Size: 480x360. <br>Right click to save as</p>
+                        <a class="btn btn-default ">
+                            Download<img src="/img/smalldownloadicon.png"  />
+                        </a>
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 thumbnailimgdiv" >
+                        <img class=" thumbnailimg"   alt="">
                                     <h3>Normal quality</h3>
                                     <p>Size: 480x360. <br>
                                     Right click to save as</p>
-                                    <a class="btn btn-default " style="background-color:#204a65;color:#FFFFFF;font-size:15px;" >
-                                        Download<img src="/img/smalldownloadicon.png" style="padding-left: 10px;"  />
+                                    <a class="btn btn-default "  >
+                                        Download<img src="/img/smalldownloadicon.png"   />
                                     </a>
                     </div>
-                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 thumbnailimgdiv" >
                         <img class=" thumbnailimg" style="width:100%"  alt="">
                                     <h3>Normal quality</h3>
                                     <p>Size: 480x360. <br>
                                     Right click to save as</p>
-                                    <a class="btn btn-default " style="background-color:#204a65;color:#FFFFFF;font-size:15px;" >
-                                        Download<img src="/img/smalldownloadicon.png" style="padding-left: 10px;"  />
+                                    <a class="btn btn-default "  >
+                                        Download<img src="/img/smalldownloadicon.png"   />
                                     </a>
                     </div>
-                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 thumbnailimgdiv" style="">
                         <img class=" thumbnailimg" style="width:100%"  alt="">
                                     <h3>Normal quality</h3>
                                     <p>Size: 480x360. <br>
                                     Right click to save as</p>
-                                    <a class="btn btn-default " style="background-color:#204a65;color:#FFFFFF;font-size:15px;" >
-                                        Download<img src="/img/smalldownloadicon.png" style="padding-left: 10px;"  />
-                                    </a>
-                    </div>
-                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="">
-                        <img class=" thumbnailimg" style="width:100%"  alt="">
-                                    <h3>Normal quality</h3>
-                                    <p>Size: 480x360. <br>
-                                    Right click to save as</p>
-                                    <a class="btn btn-default " style="background-color:#204a65;color:#FFFFFF;font-size:15px;" >
-                                        Download<img src="/img/smalldownloadicon.png" style="padding-left: 10px;"  />
+                                    <a class="btn btn-default"  >
+                                        Download<img src="/img/smalldownloadicon.png"   />
                                     </a>
                     </div>
                 </div>
@@ -172,7 +167,7 @@
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
     </div>
 
-    <div class="row detectevideo" style="display:none">
+    <div class="row detectevideo" >
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" ></div>
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10" >
             <p style="font-size:35px;color:#204a65;">Detected Media : </p>
@@ -180,11 +175,12 @@
                 <img style="width:100%;height:100%;"/>
             </div>
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 donwloadvideos">
-                <p style="font-size:20px;color:#204a65;">Show Video</p>
+                <p  class="commontextcolor">Show Video</p>
+                <a class="btn btn-default downloadvidebtn"  >
+                DOWNLOAD<img src="/img/downloadicon.png"   />
+            </a></div>
             </div>
-            <a class="btn btn-default downloadvidebtn" style="background-color:#34a087;color:#FFFFFF;font-size:22px;" >
-                DOWNLOAD<img src="/img/downloadicon.png" style="padding-left: 10px;padding-right: 10px;"  />
-            </a>
+
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" ></div>
 
@@ -198,289 +194,9 @@
 </body>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <link href="/css/font-awesome.min.css" rel="stylesheet">
-
-<style>
-        .jumbotron {
-               text-align: right;
-        }
-        .jumbotron h1 {
-            font-size: 60px;
-            color:#379886;
-        }
-        .jumbotron input {
-            font-size: 21px;
-        }
-        <!--.btn:last-child {-->
-            <!-- -webkit-border-radius: 0 4px 4px 0;-->
-            <!-- -moz-border-radius: 0 4px 4px 0;-->
-            <!--border-radius: 0 4px 4px 0;-->
-        <!--}-->
-        .jumbotron .btn {
-            font-size: 21px;
-            padding: 14px 24px;
-        }
-        input:focus{
-            outline: none;
-        }
-        .input-append  {
-            background-color:#FFFFFF;
-            border-radius:50px;
-            padding:10px;
-        }
-        .input-append-inner {
-            background-color:#f1f1f1;
-            border-radius:50px;
-        }
-        .input-append-inner input{
-            background-color:#f1f1f1;
-            border-radius:50px;
-        }
-        .thumbnails {
-            list-style: none;
-            margin-left: 0;
-        }
-        ol, ul {
-            padding: 0;
-            margin: 0 0 10px 25px;
-        }
-        .row-fluid [class*=span] {
-            display: block;
-            float: left;
-            width: 100%;
-            min-height: 30px;
-            margin-left: 2.127659574468085%;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-        }
-        .row-fluid .span3 {
-            width: 21.404255319148934%;
-        }
-        .headerBar{
-           background-color:#204a65;
-           margin-bottom:0px;
-        }
-        .takearea{
-           background-image: url(/img/upbg.jpg);
-        }
-        .mycontainer{
-            padding-right: 0px;
-            padding-left: 0px;
-            margin-right: auto;
-            margin-left: auto;
-        }
-        .showbtn{
-            border-top-right-radius:50px;
-            border-bottom-right-radius:50px;
-        }
-
-        .titile{
-            text-align:center;
-        }
-        video {
-            width: 100%;
-            max-width: 1920px;
-            height: auto;
-        }
-        .thumbbtn{
-            padding:0px;
-        }
-        .footer {
-            width: 100%;
-            height: 30px;
-            <!--background-color: #204a65;-->
-        }
-        <!--img {-->
-            <!--width: auto;-->
-            <!--height: auto;-->
-            <!--max-width: 100%;-->
-            <!--vertical-align: middle;-->
-            <!--border: 0;-->
-            <!-- -ms-interpolation-mode: bicubic;-->
-        <!--}-->
-    </style>
+<link href="/css/app.css" rel="stylesheet">
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script src="/js/app.js"></script>
 
-<script>
-    function parseURL(url) {
-        var parser = document.createElement('a'),
-            searchObject = {},
-            queries, split, i;
-        // Let the browser do the work
-        parser.href = url;
-        // Convert query string to object
-        queries = parser.search.replace(/^\?/, '').split('&');
-        for( i = 0; i < queries.length; i++ ) {
-            split = queries[i].split('=');
-            searchObject[split[0]] = split[1];
-        }
-        return {
-            protocol: parser.protocol,
-            host: parser.host,
-            hostname: parser.hostname,
-            port: parser.port,
-            pathname: parser.pathname,
-            search: parser.search,
-            searchObject: searchObject,
-            hash: parser.hash
-        };
-    }
-    var vo = document.getElementById("vid");;
-    var aspectRatio;
-    var targetWidth;
-    var targetHeight;
-    var resizeWidth;
-    var resizeHeight;
-    var canvas = document.getElementById("canvas");
-    $(document).ready(function(){
-        var formats ;
-        var videotitle;
-        $('.showbtn').click(function(e){
-            var videoUrl = $('#videourl').val().trim();
-
-            var videoId = parseURL(videoUrl).searchObject.v
-            if(videoId == "" || !videoId)
-            {
-                alert("Invalid youtube link");
-                return;
-            }
-            $('#mainshot').attr('src',"http://img.youtube.com/vi/"+videoId+"/maxresdefault.jpg");
-            $('.downloadpreview img').attr('src',"http://img.youtube.com/vi/"+videoId+"/maxresdefault.jpg");
-            var imgObjs = ($(".thumbnails").find(".thumbnailimg"))
-            for(var i=0;i<imgObjs.length;i++)
-            {
-                var imgObj =imgObjs[i];
-                var url = "http://img.youtube.com/vi/"+videoId+"/"+i+".jpg";
-                imgObj.src = url;
-                var a = $(imgObj).siblings(".thumbbtn");
-                a.attr("href",url) ;
-                a.attr("download" , "thumbnail.jpg");
-                switch(i){
-                case 0:
-                    imgObj.alt="hqdefault.jpg";
-                break;
-                default:
-                imgObj.alt="thumbnail_"+i+".jpg";
-                break;
-                }
-                var img = new Image();
-                img.onload = function(){
-                   $(imgObj).next('p').text('Size: '+this.width+"x"+this.height+".");
-                };
-                img.src = url;
-
-            }
-            var $this = $(this);
-            $this.button('loading');
-            $.ajax({url: "/getVideoUrl?url="+encodeURI(videoUrl)}).done(function(res) {
-                $this.button('reset');
-                var res = res.res;
-                formats = res['formats'];
-                videotitle = res['title'];
-                var bestFormat = formats[formats.length-1];
-                vurl = bestFormat['url'] ;
-                $('#ytvideo video').attr('src',vurl);
-                $('#ytvideo video').get(0).addEventListener("loadedmetadata",function(){
-                     aspectRatio = vo.videoWidth/vo.videoHeight;
-                     targetWidth = vo.videoWidth;
-                     targetHeight = parseInt(targetWidth/aspectRatio,10);
-                     canvas.width = targetWidth;
-                     canvas.height = targetHeight;
-                });
-                $('.thumbnailsdiv').show();
-                $('.videoarea').show();
-                $('.canvasarea').show();
-
-
-                for(var i = 0 ;i<formats.length;i++)
-                {
-                    var d = formats[i];
-                    var height = d['height'];
-                    var formatnote = d['format_note'];
-                    var des = "";
-                    var filesize = parseFloat(d['filesize'])
-                    var filesizeinmb = parseInt(filesize*0.00000095367432);
-                    var resolution = d['resolution'];
-                    var url = d['url'];
-
-                    if(height <360){
-                        des = "Youtube Video <b>Mobile Version (3GP)</b>, Resolution:"+resolution+", Size : "+filesizeinmb+"mb ";
-                    }else if(height <480)
-                    {
-                        des = "Youtube Video <b>Standard Quality (360p)</b>, Resolution:"+resolution+", Size : "+filesizeinmb+"mb ";
-                    }else if(height<720)
-                    {
-                        des = "Youtube Video <b>High Quality (480p)</b>, Resolution:"+resolution+", Size : "+filesizeinmb+"mb ";
-                    }else
-                    {
-                        des = "Youtube Video <b>High Quality ("+formatnote+")</b>, Resolution"+resolution+":, Size : "+filesizeinmb+"mb "
-                    }
-                    $('.donwloadvideos').append($("<div class='radio'><label><input type='radio' name='optradio' value="+i+">"+des+"</label></div>").click(selectdownload))
-                }
-                $(".detectevideo").show();
-
-            }).fail(function(){
-               alert("failed");
-               $this.button('reset')
-            });
-        })
-
-        $('#snap').bind('click',function(){
-            $('#mainshot').hide();
-            printScreenshots();
-        });
-
-        function printScreenshots(){
-            targetWidth = resizeWidth || targetWidth;
-            targetHeight = resizeHeight || targetHeight
-            $('#resizeWidth').val(targetWidth);
-            $('#resizeHeight').val(targetHeight);
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-            $(canvas).width(targetWidth);
-            $(canvas).height(targetHeight);
-            $('#canvas').show();
-            var context = canvas.getContext("2d");
-            context.fillRect(0,0,targetWidth,targetHeight);
-            context.drawImage(vo,0,0,targetWidth,targetHeight);
-            $(".screenshotsarea").show();
-        }
-
-        function selectdownload(){
-            var index = $('.radio input:checked').val();
-            var format = formats[index];
-            var ext = format['ext'];
-            $('.downloadvidebtn').attr('href',format['url']);
-            $('.downloadvidebtn').attr('download',videotitle+"."+ext);
-        }
-
-        $('#resize').bind('click',function(){
-            var tempW = parseInt($('#resizeWidth').val(),10);
-            var tempH = parseInt($('#resizeHeight').val(),10);
-            if(tempW > 0 && tempH > 0)
-            {
-                resizeWidth = tempW;
-                resizeHeight = tempH;
-            }else if(tempW > 0 && (!tempH || tempH <=0) )
-            {
-                tempH = parseInt(tempW/aspectRatio);
-                resizeWidth = tempW;
-                resizeHeight = tempH;
-            }else if(tempH > 0 && (!tempW || tempW <=0) ){
-                tempW = parseInt(tempH*aspectRatio);
-                resizeWidth = tempW;
-                resizeHeight = tempH;
-            }else{
-                resizeWidth = targetWidth;
-                resizeHeight = targetHeight;
-            }
-            $('#resizeWidth').val(resizeWidth);
-            $('#resizeHeight').val(resizeHeight);
-            $('#canvas').width(resizeWidth);
-            $('#canvas').height(resizeHeight);
-            printScreenshots();
-        });
-    })
-</script>
 </html>
