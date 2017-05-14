@@ -751,7 +751,7 @@ class MyYoutubeExtractor(InfoExtractor):
 
 
     def __init__(self):
-        pass
+        self._player_cache = {}
 
 
     def report_rtmp_download(self):
