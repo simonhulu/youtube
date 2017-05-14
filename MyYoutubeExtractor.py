@@ -9,6 +9,7 @@ from youtube_dl.extractor.common import InfoExtractor, SearchInfoExtractor
 from youtube_dl.downloader.common import FileDownloader
 from youtube_dl.utils import *
 from youtube_dl.compat import *
+from  youtube_dl.jsinterp import *
 import socket
 import socks
 import urllib2
@@ -909,6 +910,93 @@ class MyYoutubeExtractor(InfoExtractor):
             pass;
             return self._parse_json(
                 uppercase_escape(config), video_id, fatal=False)
+
+    def _extract_signature_function(self, video_id, player_url, example_sig):
+        id_m = re.match(
+            r'.*?-(?P<id>[a-zA-Z0-9_-]+)(?:/watch_as3|/html5player(?:-new)?|(?:/[a-z]{2}_[A-Z]{2})?/base)?\.(?P<ext>[a-z]+)$',
+            player_url)
+        if not id_m:
+            raise ExtractorError('Cannot identify player %r' % player_url)
+        player_type = id_m.group('ext')
+        player_id = id_m.group('id')
+
+        # Read from filesystem cache
+        func_id = '%s_%s_%s' % (
+            player_type, player_id, self._signature_cache_id(example_sig))
+        assert os.path.basename(func_id) == func_id
+
+        # cache_spec = self._downloader.cache.load('youtube-sigfuncs', func_id)
+        cache_spec = None
+        if cache_spec is not None:
+            return lambda s: ''.join(s[i] for i in cache_spec)
+
+        # download_note = (
+        #     'Downloading player %s' % player_url
+        #     if self._downloader.params.get('verbose') else
+        #     'Downloading %s player %s' % (player_type, player_id)
+        # )
+        download_note = None
+        if player_type == 'js':
+            code = self.downloadpage(player_url)
+            # code = self._download_webpage(
+            #     player_url, video_id,
+            #     note=download_note,
+            #     errnote='Download of %s failed' % player_url)
+            res = self._parse_sig_js(code)
+        elif player_type == 'swf':
+            urlh = self.downloadpage(player_url)
+            code = urlh.read()
+            res = self._parse_sig_swf(code)
+        else:
+            assert False, 'Invalid player type %r' % player_type
+
+        test_string = ''.join(map(compat_chr, range(len(example_sig))))
+        cache_res = res(test_string)
+        cache_spec = [ord(c) for c in cache_res]
+
+        # self._downloader.cache.store('youtube-sigfuncs', func_id, cache_spec)
+        return res
+
+    def _signature_cache_id(self, example_sig):
+        """ Return a string representation of a signature """
+        return '.'.join(compat_str(len(part)) for part in example_sig.split('.'))
+
+    def _decrypt_signature(self, s, video_id, player_url, age_gate=False):
+        """Turn the encrypted s field into a working signature"""
+
+        if player_url is None:
+            raise ExtractorError('Cannot decrypt signature without player_url')
+
+        if player_url.startswith('//'):
+            player_url = 'https:' + player_url
+        elif not re.match(r'https?://', player_url):
+            player_url = compat_urlparse.urljoin(
+                'https://www.youtube.com', player_url)
+        try:
+            player_id = (player_url, self._signature_cache_id(s))
+            if player_id not in self._player_cache:
+                func = self._extract_signature_function(
+                    video_id, player_url, s
+                )
+                self._player_cache[player_id] = func
+            func = self._player_cache[player_id]
+            # if self._downloader.params.get('youtube_print_sig_code'):
+            #     self._print_sig_code(func, s)
+            return func(s)
+        except Exception as e:
+            tb = traceback.format_exc()
+            raise ExtractorError(
+                'Signature extraction failed: ' + tb, cause=e)
+
+    def _parse_sig_js(self, jscode):
+        funcname = self._search_regex(
+            (r'(["\'])signature\1\s*,\s*(?P<sig>[a-zA-Z0-9$]+)\(',
+             r'\.sig\|\|(?P<sig>[a-zA-Z0-9$]+)\('),
+            jscode, 'Initial JS player signature function name', group='sig')
+
+        jsi = JSInterpreter(jscode)
+        initial_function = jsi.extract_function(funcname)
+        return lambda s: initial_function([s])
     def real_extractor(self,url):
         url, smuggled_data = unsmuggle_url(url, {})
 

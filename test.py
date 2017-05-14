@@ -45,8 +45,8 @@ firefox_capabilities['marionette'] = True
 if __name__ == '__main__':
     extractor = MyYoutubeExtractor();
     youtubeie = YoutubeIE();
-    url = "https://www.youtube.com/watch?v=rBJ2OSWFKkA";
-    video_id = "rBJ2OSWFKkA";
+    url = "https://www.youtube.com/watch?v=Mp9he8nZs8I";
+    video_id = "Mp9he8nZs8I";
     test = True
     if test:
         # with youtube_dl.YoutubeDL() as ydl:
