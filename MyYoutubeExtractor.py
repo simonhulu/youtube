@@ -749,7 +749,6 @@ class MyYoutubeExtractor(InfoExtractor):
         },
     ]
 
-
     def __init__(self):
         self._player_cache = {}
 
@@ -775,7 +774,6 @@ class MyYoutubeExtractor(InfoExtractor):
         # Configuration
         ua = UserAgent()
         header = {'User-Agent':str(ua.ie)}
-        webcontent = requests.get(url,header,verify=True)
         webcontent.raise_for_status()
         return webcontent.text ;
     def _html_search_meta(self, name, html, display_name=None, fatal=False, **kwargs):
@@ -1559,7 +1557,6 @@ class MyYoutubeExtractor(InfoExtractor):
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
                 url = d['url'];
-                response = requests.head(url)
                 d['filesize']  =  response.headers['Content-Length']
                 wformats.append(d)
 
