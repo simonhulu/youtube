@@ -33,6 +33,9 @@ extractor = MyYoutubeExtractor();
 @app.route('/')
 def hello_world():
     return render_template('youtubescreenshot.html')
+@app.route('/feedback')
+def feedbackpage():
+    return render_template('community.html')
 
 @app.route('/getVideoUrl/')
 def getVideoUrl():
