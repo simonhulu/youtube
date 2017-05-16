@@ -68,7 +68,7 @@ function parseURL(url) {
             }
             var $this = $(this);
             $this.button('loading');
-            $.ajax({url: "/getVideoUrl?url="+encodeURI(videoUrl)}).done(function(res) {
+            $.ajax({type: "POST", url:"/getVideoUrl",data: { url: encodeURI(videoUrl) }}).done(function(res) {
                 $this.button('reset');
                 var res = res.res;
                 formats = res['formats'];

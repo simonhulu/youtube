@@ -37,10 +37,10 @@ def hello_world():
 def feedbackpage():
     return render_template('community.html')
 
-@app.route('/getVideoUrl/')
+@app.route('/getVideoUrl',methods = ['GET', 'POST'])
 def getVideoUrl():
 
-    youtubeUrl = request.args.get('url');
+    youtubeUrl = request.form['url'];
     url = "";
     print(youtubeUrl)
     imeilires = Imeili100Result()

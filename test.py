@@ -45,13 +45,18 @@ firefox_capabilities['marionette'] = True
 if __name__ == '__main__':
     extractor = MyYoutubeExtractor();
     youtubeie = YoutubeIE();
-    url = "https://www.youtube.com/watch?v=Mp9he8nZs8I";
-    video_id = "Mp9he8nZs8I";
+    url = "https://www.youtube.com/watch?v=HGxRiReJQdk";
+    video_id = "HGxRiReJQdk";
     test = True
+    ydl_opts = {
+
+        'listsubtitles': True,
+        "proxy":"socks5://127.0.0.1:1080"
+    }
     if test:
-        # with youtube_dl.YoutubeDL() as ydl:
+        # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         #     ydl.add_default_info_extractors()
-        #     res = ydl.extract_info(url, False)
+        #     res = ydl.download([url])
         # import mechanize
         #
         # br = mechanize.Browser()
