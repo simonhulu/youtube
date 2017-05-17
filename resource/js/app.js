@@ -60,9 +60,13 @@ function parseURL(url) {
                 break;
                 }
                 var img = new Image();
-                img.onload = function(){
-                   $(imgObj).next('p').text('Size: '+this.width+"x"+this.height+".");
-                };
+
+                img.onload = (function(imgObj) {
+                    return function() {
+                       console.log(this.width+"x"+this.height);
+                       $(imgObj).nextAll('p').text('Size: '+this.width+"x"+this.height+".");
+                    }
+                })(imgObj);
                 img.src = url;
 
             }

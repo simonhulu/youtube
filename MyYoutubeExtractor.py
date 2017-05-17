@@ -1681,7 +1681,7 @@ class MyYoutubeExtractor(InfoExtractor):
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
                 url = d['url'];
-                response = requests.head(url,)
+                response = requests.head(url)
                 d['filesize']  =  response.headers['Content-Length']
                 wformats.append(d)
 
