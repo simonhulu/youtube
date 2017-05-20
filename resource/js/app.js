@@ -31,6 +31,7 @@ function parseURL(url) {
     $(document).ready(function(){
         var formats ;
         var videotitle;
+        var subtitles;
         $('.showbtn').click(function(e){
             var videoUrl = $('#videourl').val().trim();
 
@@ -74,8 +75,15 @@ function parseURL(url) {
             $this.button('loading');
             $.ajax({type: "POST", url:"/getVideoUrl",data: { url: encodeURI(videoUrl) }}).done(function(res) {
                 $this.button('reset');
+                if(res.status !=0)
+                {
+                    var errMsg = res.res['errMsg'];
+                    alert(errMsg);
+                    return;
+                }
                 var res = res.res;
                 formats = res['formats'];
+                subtitles = res['subtitles'];
                 videotitle = res['title'];
                 var bestFormat = formats[formats.length-1];
                 vurl = bestFormat['url'] ;
@@ -117,6 +125,21 @@ function parseURL(url) {
                     }
                     $('.donwloadvideos p').after($("<div class='radio'><label><input type='radio' name='optradio' value="+i+">"+des+"</label></div>").click(selectdownload))
                 }
+                if(subtitles)
+                {
+                    for(var k in subtitles)
+                    {
+                        lang_subtitles = subtitles[k];
+                        for (var  i = 0 ;i<lang_subtitles.length;i++)
+                        {
+                            lang_subtitle = lang_subtitles[i];
+                            var ext = lang_subtitle['ext'];
+                            var url = lang_subtitle["url"];
+                            des = "Youtube Video Subtitle  "+k+" subtitles."+ext;
+                            $('.donwloadvideos p').after($("<div class='radio'><label><input type='radio' name='optradio' value="+url+">"+des+"</label></div>").click(subtitledownload))
+                        }
+                    }
+                }
                 $(".detectevideo").show();
 
             }).fail(function(){
@@ -144,6 +167,15 @@ function parseURL(url) {
             context.fillRect(0,0,targetWidth,targetHeight);
             context.drawImage(vo,0,0,targetWidth,targetHeight);
             $(".screenshotsarea").show();
+        }
+
+        function subtitledownload(){
+//            var subtitle = subtitles[0];
+//            var subtitleurl = subtitle['url'];
+//            var ext = subtitle['ext'];
+            var url = $('.radio input:checked').val();
+            $('.downloadvidebtn').attr('href',url);
+            $('.downloadvidebtn').attr('download',"subtitle");
         }
 
         function selectdownload(){

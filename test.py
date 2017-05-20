@@ -43,6 +43,11 @@ firefox_capabilities['marionette'] = True
 
 
 if __name__ == '__main__':
+
+    youtubeUrl = "www.youtube.com/watch?v=rBJ2OSWFKkA";
+    m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
+    print m
+
     extractor = MyYoutubeExtractor();
     youtubeie = YoutubeIE();
     url = "https://www.youtube.com/watch?v=HGxRiReJQdk";

@@ -37,17 +37,30 @@ def hello_world():
 def feedbackpage():
     return render_template('community.html')
 
+@app.route('/downloadsrt/')
+def downloadsrt():
+    return render_template('downloadsrt.html')
+
 @app.route('/getVideoUrl',methods = ['GET', 'POST'])
 def getVideoUrl():
 
     youtubeUrl = request.form['url'];
-    url = "";
-    print(youtubeUrl)
+
+    regex = r"(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)"
+    pattern = re.compile(regex)
+    m = pattern.search(youtubeUrl)
+
     imeilires = Imeili100Result()
+
+    if m == None or m.group(1) == None:
+        imeilires.status = int(Imeili100ResultStatus.failed)
+        imeilires.res = {"errMsg":"invalid URL"};
+        return jsonify(imeilires.__dict__)
+    vid = m.group(1)
+    youtubeUrl = "https://www.youtube.com/watch?v="+vid
     vurl = extractor.extractVideo(youtubeUrl)
     imeilires.status = int(Imeili100ResultStatus.ok)
     imeilires.res = vurl;
-    print(vurl)
     return jsonify(imeilires.__dict__)
 
 
