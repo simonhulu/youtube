@@ -21,6 +21,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from MyYoutubeExtractor import MyYoutubeExtractor
 from fake_useragent import UserAgent
 import requests
+
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -44,18 +45,16 @@ firefox_capabilities['marionette'] = True
 
 if __name__ == '__main__':
 
-    youtubeUrl = "www.youtube.com/watch?v=rBJ2OSWFKkA";
-    m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
-    print m
+    # youtubeUrl = "www.youtube.com/watch?v=rBJ2OSWFKkA";
+    # m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
+    # print m
 
     extractor = MyYoutubeExtractor();
     youtubeie = YoutubeIE();
-    url = "https://www.youtube.com/watch?v=HGxRiReJQdk";
+    url = "https://www.youtube.com/watch?v=79CmjcIYfas";
     video_id = "HGxRiReJQdk";
     test = True
     ydl_opts = {
-
-        'listsubtitles': True,
         "proxy":"socks5://127.0.0.1:1080"
     }
     if test:
@@ -69,8 +68,9 @@ if __name__ == '__main__':
         # print resp.info()  # headers
         # print resp.read()  # content
 
-        dic = extractor.extractVideo(url)
+        dic = extractor.extractVideo("https://www.youtube.com/watch?v=79CmjcIYfas")
         print(dic)
+
     else:
         dic =  extractor.bestVideo(url)
         print(dic)

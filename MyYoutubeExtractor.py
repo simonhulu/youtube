@@ -778,7 +778,7 @@ class MyYoutubeExtractor(InfoExtractor):
         # Configuration
         ua = UserAgent()
         header = {'User-Agent':str(ua.ie)}
-        webcontent = requests.get(url,header,verify=True)
+        webcontent = requests.get(url,header,verify=True,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
         webcontent.raise_for_status()
         return webcontent.text ;
     def _html_search_meta(self, name, html, display_name=None, fatal=False, **kwargs):
@@ -1674,23 +1674,47 @@ class MyYoutubeExtractor(InfoExtractor):
             return {}
         return sub_lang_list
 
-
+    def getSubtitles(self,url):
+        video_id = self.extract_id(url)
+        video_webpage = self.downloadpage(url)
+        video_subtitles = self._get_subtitles(video_id, video_webpage)
+        return video_subtitles
+    def getautosubtitles(self,url):
+        video_id = self.extract_id(url)
+        video_webpage = self.downloadpage(url)
+        automatic_captions = self._get_automatic_captions(video_id, video_webpage)
+        return automatic_captions
     def extractVideo(self,url):
         dic = self.real_extractor(url)
         wformats = []
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
                 url = d['url'];
-                response = requests.head(url)
+                response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
                 d['filesize']  =  response.headers['Content-Length']
                 wformats.append(d)
-
+        audio_formats = [ f for f in dic['formats']
+            if f.get('vcodec') == 'none']
+        video_formats = [
+            f for f in dic['formats']
+            if f.get('acodec') == 'none']
         dic['formats'] = wformats;
+        dic['audio_formats'] = audio_formats
+        dic['video_formats'] = video_formats
+        dic['best_video'] = self.bestVideo(video_formats)
+        dic['best_audio'] = self.bestAudio(audio_formats)
         return dic
-    def bestVideo(self,url):
-        dic = self.extractVideo(url);
-        vdic = dic['formats'][-1];
-        return vdic['url']
+    def bestVideo(self,formats):
+        for format in formats:
+            if format['format_id'] == '137':
+                return  format
+        return None;
+
+    def bestAudio(self,formats):
+        for format in formats:
+            if format['format_id'] == '140':
+                return  format
+        return None;
 
 
 
