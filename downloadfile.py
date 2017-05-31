@@ -1,4 +1,7 @@
 from enum import IntEnum
+from mongoengine import *
+connect('youtube')
+class Comment(EmbeddedDocument)
 class YoutubeFileType(IntEnum):
        unknow, video,audio = range(3)
 
