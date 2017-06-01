@@ -82,20 +82,22 @@ def record1080():
                 betstvideo = info['best_video'];
                 if betstaudio and betstvideo :
                     #存储task
-                    downloaddataTaskcollection = db['youtube_downloadTask'];
-                    task =  YoutubeDownloadTask(YoutubeDownloadTaskType.merge1080P,int(YoutubeTaskStatus.init),vid)
-                    taskid = downloaddataTaskcollection.insert_one(task.__dict__).inserted_id
-
+                    task = YoutubeDownloadTask(type=YoutubeDownloadTaskType.merge1080P,status = int(YoutubeTaskStatus.init),vid=vid).save()
                     # Start new Threads
-                    videoDownload = preparedownload(vid,int(YoutubeFileType.video),betstvideo['url'],betstvideo['ext'],str(taskid))
-                    audioDownload = preparedownload(vid,int(YoutubeFileType.audio),betstaudio['url'],betstaudio['ext'],str(taskid))
-                    downloaddatacollection = db['youtube_downloadfile'];
-                    downloaddatacollection.insert_one(videoDownload.__dict__)
-                    downloaddatacollection.insert_one(audioDownload.__dict__)
+                    videoDownload = preparedownload(vid,int(YoutubeFileType.video),betstvideo['url'],betstvideo['ext'],task)
+                    audioDownload = preparedownload(vid,int(YoutubeFileType.audio),betstaudio['url'],betstaudio['ext'],task)
                     thread1 = DownloadYoutubeThread(videoDownload)
                     thread2 = DownloadYoutubeThread(audioDownload)
                     thread1.start()
                     thread2.start()
+        else:
+            youtubeUrl = "https://www.youtube.com/watch?v=" + vid
+            vurl = extractor.extractVideo(youtubeUrl)
+            if vurl:
+                g_redis.set(vid, json.dumps({"info": vurl}))
+                g_redis.expire(vid, 3600)
+            else:
+                return "can not get video"
     return "no"
 
 
@@ -103,7 +105,7 @@ def record1080():
 
 
 
-def preparedownload(vid,type,url,ext,taskid):
+def preparedownload(vid,type,url,ext,task):
     #创建唯一文件名
 
     tempfilename = str(uuid.uuid4())+"."+ext;
@@ -118,7 +120,7 @@ def preparedownload(vid,type,url,ext,taskid):
     #获得 文件大小
     response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
     contentlength = response.headers['Content-Length']
-    downloaddata =  YoutubeFileDownloadData(filepath,contentlength,type,int(YoutubeDownloadStatus.init),url,ext,taskid)
+    downloaddata =  YoutubeFileDownloadData(filestorepath = filepath,contentlength = contentlength,filetype = type,downloadStatus = int(YoutubeDownloadStatus.init),url=url,ext=ext,task=task).save()
     return downloaddata
 
 @app.route('/getVideoUrl',methods = ['GET', 'POST'])
@@ -141,13 +143,12 @@ def getVideoUrl():
     imeilires.status = int(Imeili100ResultStatus.ok)
     imeilires.res = vurl;
     g_redis.set(vid,json.dumps({"info":vurl}))
+    g_redis.expire(vid,3600)
     return jsonify(imeilires.__dict__)
 
 def download(downloaddata):
-    downloaddatacollection = db['youtube_downloadfile'];
-
-    downloaddatacollection.update_one({"filestorepath": downloaddata.filestorepath},
-                                      {'$set': {'downloadStatus': int(YoutubeDownloadStatus.start)}})
+    downloaddata.downloadStatus = int(YoutubeDownloadStatus.start)
+    downloaddata.save()
     print 'start download====================='+str(int(YoutubeDownloadStatus.start))
     url = downloaddata.url
     destfilepath =  tmpstorepath+downloaddata.filestorepath
@@ -170,43 +171,42 @@ def download(downloaddata):
         c.perform()
     except pycurl.error,e:
         print "Posting to %s resulted in error: %s" % (url, e)
-        downloaddatacollection.update_one({"filestorepath": downloaddata.filestorepath},
-                                          {'$set': {'downloadStatus': int(YoutubeDownloadStatus.error)}})
+        downloaddata.downloadStatus = int(YoutubeDownloadStatus.error)
+        downloaddata.save()
         return
     c.close()
-    downloaddatacollection.update_one({"filestorepath": downloaddata.filestorepath},
-                                      {'$set': {'downloadStatus': int(YoutubeDownloadStatus.done)}})
-
+    downloaddata.downloadStatus = int(YoutubeDownloadStatus.done)
+    downloaddata.save()
     print "download done====================" + downloaddata.filestorepath
     startconvert(downloaddata)
 
 def startconvert(downloaddata):
 
-    taskid = downloaddata.taskid
-    downloaddataTaskcollection = db['youtube_downloadTask'];
-    task = downloaddataTaskcollection.find_one({"_id": ObjectId(taskid)})
-    downloaddatacollection = db['youtube_downloadfile'];
-    cursor = downloaddatacollection.find({"taskid":taskid})
-    files = list(cursor)
+    task = downloaddata.task
+    files = list(YoutubeFileDownloadData.objects.raw({'task':task._id}))
     alldone = True
     for data in files:
-        if data['downloadStatus'] != int(YoutubeDownloadStatus.done):
+        if data.downloadStatus != int(YoutubeDownloadStatus.done):
             alldone = False
             break;
     if alldone:
-        downloaddataTaskcollection.update_one({"_id": ObjectId(taskid)},{'$set':{'status':int(YoutubeTaskStatus.done)}})
-        if task['type'] == int(YoutubeDownloadTaskType.merge1080P):
+        task.status =  int(YoutubeTaskStatus.done)
+        task.save()
+        if task.type == int(YoutubeDownloadTaskType.merge1080P):
             videofile = None
             audiofile = None
             for data in files:
-                if data['filetype'] == int(YoutubeFileType.video):
+                if data.filetype == int(YoutubeFileType.video):
                     videofile = data
                     continue;
-                if data['filetype'] == int(YoutubeFileType.audio):
+                if data.filetype == int(YoutubeFileType.audio):
                     audiofile = data;
-            output = os.path.dirname(os.path.realpath(tmpstorepath+videofile['filestorepath'])) +"/"+str(uuid.uuid4())+".avi"
+            relativepath = str(uuid.uuid4())
+            output = os.path.dirname(os.path.realpath(tmpstorepath+videofile['filestorepath'])) +"/"+relativepath+".avi"
             command = "ffmpeg -i {videofile} -i {audiofile} -map 0 -map 1 -acodec copy -vcodec copy {output}".format(videofile = (tmpstorepath+videofile['filestorepath']),audiofile=(tmpstorepath+audiofile['filestorepath']),output=output)
-            subprocess.call(command,shell=True)
+            ret = subprocess.call(command,shell=True)
+            if ret == 0:
+                task.resultfilepath = relativepath
             print "convert done===================="
             return
 class DownloadYoutubeThread (threading.Thread):
