@@ -192,7 +192,6 @@ function parseURL(url) {
             var format = formats[index];
             var ext = format['ext'];
             $('.downloadvidebtn').attr('href',format['url']+"&title="+(videotitle+"."+ext));
-            $('.downloadvidebtn').attr('download',videotitle+"."+ext);
         }
 
 
