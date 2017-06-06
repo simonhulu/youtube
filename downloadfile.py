@@ -11,10 +11,10 @@ class YoutubeDownloadTaskType(IntEnum):
     unknow, onlyVideo, onlyAudio,merge1080P = range(4)
 
 class YoutubeDownloadStatus(IntEnum):
-    unknow, init, start,downloading,done,error = range(6)
+    unknow,error, init, start,downloading,done = range(6)
 
 class YoutubeTaskStatus(IntEnum):
-    unknow, init, start,downloading,done,error = range(6)
+    unknow,error, init, start,downloading,downloadDone,converting,convertdone,converterror = range(9)
 
 class YoutubeDownloadTask(MongoModel):
     type = fields.IntegerField(required=True)
@@ -27,6 +27,13 @@ class YoutubeDownloadTask(MongoModel):
     #     self.type = type
     #     self.vid = vid;
     #     self.status = status
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        data = state["_data"]
+        data['_id'] = str(data['_id'])
+        return data
+    def __setstate__(self, state):
+        self.__dict__.update(state)
 class YoutubeFileDownloadData(MongoModel):
     filestorepath = fields.CharField(required=True)
     contentlength = fields.BigIntegerField(required=True)
@@ -46,3 +53,11 @@ class YoutubeFileDownloadData(MongoModel):
     #     self.url = url;
     #     self.ext = ext;
     #     self.taskid = taskid ;
+    def __getstate__(self):
+            state = self.__dict__.copy()
+            data = state["_data"]
+            data['_id'] = str(data['_id'])
+            return data
+
+    def __setstate__(self, state):
+            self.__dict__.update(state)

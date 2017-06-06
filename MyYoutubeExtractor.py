@@ -20,6 +20,7 @@ from selenium.common.exceptions import  *
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from fake_useragent import UserAgent
+from flask import  current_app
 import requests
 import xml
 compiled_regex_type = type(re.compile(''))
@@ -778,7 +779,10 @@ class MyYoutubeExtractor(InfoExtractor):
         # Configuration
         ua = UserAgent()
         header = {'User-Agent':str(ua.ie)}
-        webcontent = requests.get(url,header,verify=True,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
+        if current_app.config['USEPROXY']:
+            webcontent = requests.get(url,header,verify=True,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
+        else:
+            webcontent = requests.get(url, header, verify=True)
         webcontent.raise_for_status()
         return webcontent.text ;
     def _html_search_meta(self, name, html, display_name=None, fatal=False, **kwargs):
@@ -1690,8 +1694,11 @@ class MyYoutubeExtractor(InfoExtractor):
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
                 url = d['url'];
-                response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
-                d['filesize']  =  response.headers['Content-Length']
+                if current_app.config['USEPROXY']:
+                    response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
+                else:
+                    response = requests.head(url)
+                d['filesize']  =  float(response.headers['Content-Length'])
                 wformats.append(d)
         audio_formats = [ f for f in dic['formats']
             if f.get('vcodec') == 'none']

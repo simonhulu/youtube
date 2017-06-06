@@ -25,13 +25,14 @@ function parseURL(url) {
     var aspectRatio;
     var targetWidth;
     var targetHeight;
-    var resizeWidth;
-    var resizeHeight;
+    var resizeW;
+    var resizeH;
     var canvas = document.getElementById("canvas");
     $(document).ready(function(){
         var formats ;
         var videotitle;
         var subtitles;
+
         $('.showbtn').click(function(e){
             var videoUrl = $('#videourl').val().trim();
 
@@ -99,7 +100,7 @@ function parseURL(url) {
                 $('.videoarea').show();
                 $('.canvasarea').show();
 
-
+                $('.donwloadvideos p').nextAll().remove()
                 for(var i = 0 ;i<formats.length;i++)
                 {
                     var d = formats[i];
@@ -154,8 +155,10 @@ function parseURL(url) {
         });
 
         function printScreenshots(){
-            targetWidth = resizeWidth || targetWidth;
-            targetHeight = resizeHeight || targetHeight
+        console.log(resizeW)
+        console.log(targetWidth)
+            targetWidth = resizeW || targetWidth;
+            targetHeight = resizeH || targetHeight
             $('#resizeWidth').val(targetWidth);
             $('#resizeHeight').val(targetHeight);
             canvas.width = targetWidth;
@@ -168,6 +171,12 @@ function parseURL(url) {
             context.drawImage(vo,0,0,targetWidth,targetHeight);
             $(".screenshotsarea").show();
         }
+
+        $('.downloadvidebtn').click(function(e){
+            e.preventDefault();
+            var href = $(this).attr('href');
+            location.href = href;
+        })
 
         function subtitledownload(){
 //            var subtitle = subtitles[0];
@@ -182,34 +191,36 @@ function parseURL(url) {
             var index = $('.radio input:checked').val();
             var format = formats[index];
             var ext = format['ext'];
-            $('.downloadvidebtn').attr('href',format['url']);
+            $('.downloadvidebtn').attr('href',format['url']+"&title="+(videotitle+"."+ext));
             $('.downloadvidebtn').attr('download',videotitle+"."+ext);
         }
+
+
 
         $('#resize').bind('click',function(){
             var tempW = parseInt($('#resizeWidth').val(),10);
             var tempH = parseInt($('#resizeHeight').val(),10);
             if(tempW > 0 && tempH > 0)
             {
-                resizeWidth = tempW;
-                resizeHeight = tempH;
+                resizeW = tempW;
+                resizeH = tempH;
             }else if(tempW > 0 && (!tempH || tempH <=0) )
             {
                 tempH = parseInt(tempW/aspectRatio);
-                resizeWidth = tempW;
+                resizeW = tempW;
                 resizeHeight = tempH;
             }else if(tempH > 0 && (!tempW || tempW <=0) ){
                 tempW = parseInt(tempH*aspectRatio);
-                resizeWidth = tempW;
-                resizeHeight = tempH;
+                resizeW = tempW;
+                resizeH = tempH;
             }else{
-                resizeWidth = targetWidth;
-                resizeHeight = targetHeight;
+                resizeW = targetWidth;
+                resizeH = targetHeight;
             }
-            $('#resizeWidth').val(resizeWidth);
-            $('#resizeHeight').val(resizeHeight);
-            $('#canvas').width(resizeWidth);
-            $('#canvas').height(resizeHeight);
+            $('#resizeWidth').val(resizeW);
+            $('#resizeHeight').val(resizeH);
+            $('#canvas').width(resizeW);
+            $('#canvas').height(resizeH);
             printScreenshots();
         });
     })

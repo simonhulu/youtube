@@ -21,7 +21,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from MyYoutubeExtractor import MyYoutubeExtractor
 from fake_useragent import UserAgent
 import requests
-
+import pycurl
+from StringIO import StringIO
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -48,6 +49,17 @@ if __name__ == '__main__':
     # youtubeUrl = "www.youtube.com/watch?v=rBJ2OSWFKkA";
     # m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
     # print m
+    buffer = StringIO()
+    c = pycurl.Curl()
+    c.setopt(c.URL, 'http://www.youtube.com')
+    c.setopt(c.WRITEDATA, buffer)
+    c.perform()
+    c.close()
+
+    body = buffer.getvalue()
+    # Body is a string in some encoding.
+    # In Python 2, we can print it without knowing what the encoding is.
+    print(body)
 
     extractor = MyYoutubeExtractor();
     youtubeie = YoutubeIE();
