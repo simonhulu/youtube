@@ -100,7 +100,7 @@ function parseURL(url) {
                 $('.videoarea').show();
                 $('.canvasarea').show();
 
-                $('.donwloadvideos p').nextAll().remove()
+                $('.videolist').empty()
                 for(var i = 0 ;i<formats.length;i++)
                 {
                     var d = formats[i];
@@ -124,7 +124,7 @@ function parseURL(url) {
                     {
                         des = "Youtube Video <b>High Quality ("+formatnote+")</b>, Resolution"+resolution+":, Size : "+filesizeinmb+"mb "
                     }
-                    $('.donwloadvideos p').after($("<div class='radio'><label><input type='radio' name='optradio' value="+i+">"+des+"</label></div>").click(selectdownload))
+                    $('.videolist').append($("<div class='radio'><label><input type='radio' name='optradio' value="+i+">"+des+"</label></div>").click(selectdownload))
                 }
                 if(subtitles)
                 {
@@ -137,7 +137,7 @@ function parseURL(url) {
                             var ext = lang_subtitle['ext'];
                             var url = lang_subtitle["url"];
                             des = "Youtube Video Subtitle  "+k+" subtitles."+ext;
-                            $('.donwloadvideos p').after($("<div class='radio'><label><input type='radio' name='optradio' value="+url+">"+des+"</label></div>").click(subtitledownload))
+                            $('.videolist').append($("<div class='radio'><label><input type='radio' name='optradio' value="+url+">"+des+"</label></div>").click(subtitledownload))
                         }
                     }
                 }
