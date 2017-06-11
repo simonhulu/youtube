@@ -382,6 +382,7 @@ def startconvert(downloaddata):
             re_position = re.compile('time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})\d*', re.U | re.I)
             command = "ffmpeg -i {videofile} -i {audiofile} -map 0 -map 1 -acodec copy -vcodec copy {output}".format(videofile = (tmpstorepath+videofile.filestorepath),audiofile=(tmpstorepath+audiofile.filestorepath),output=output)
             runner = FFMPegRunner()
+            print command
             def status_handler(old, new):
                 print "====================From {0} to {1}".format(old, new)
                 task.progress = new
