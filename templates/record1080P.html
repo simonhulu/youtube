@@ -51,7 +51,7 @@ $(document).ready(function() {
                 }else{
                     progress = (res.res.progress);
                     $('.savedProgressbar').width(Math.floor(progress*100)+'%');
-                    $('.savedProgressbar').text((Math.floor(progress*100)+'%');
+                    $('.savedProgressbar').text(Math.floor(progress*100)+'%');
                     if (progress >= 1)
                     {
                          clearInterval(nr);
