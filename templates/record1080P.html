@@ -50,6 +50,8 @@ $(document).ready(function() {
                      alert("Download failed,please refresh");
                 }else{
                     progress = res.res.progress;
+                    $('.savedProgressbar').width(Math.floor(progress*100)+'%');
+                    $('.savedProgressbar').text(Math.floor(progress*100)+'%');
                     if (progress >= 1)
                     {
                          clearInterval(nr);
@@ -58,8 +60,7 @@ $(document).ready(function() {
                             convertnr = setInterval(fetchconverted,5000);
                          }
                     }
-                    $('.savedProgressbar').width((progress*100)+'%');
-                    $('.savedProgressbar').text((progress*100)+'%');
+
                 }
         });
     }
@@ -73,14 +74,14 @@ $(document).ready(function() {
                  alert("Download failed,please refresh");
                 }else{
                     progress = res.res.progress;
-                    console.log(progress);
+                    $('.convertedProgressbar').width(Math.floor(progress)+'%');
+                    $('.convertedProgressbar').text(Math.floor(progress)+'%');
                     if (progress >= 1)
                     {
                          clearInterval(convertnr);
                          $('.btn').show()
                     }
-                    $('.convertedProgressbar').width((progress)+'%');
-                    $('.convertedProgressbar').text((progress)+'%');
+
                 }
         });
     }
