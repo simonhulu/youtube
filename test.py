@@ -49,19 +49,8 @@ if __name__ == '__main__':
     # youtubeUrl = "www.youtube.com/watch?v=rBJ2OSWFKkA";
     # m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
     # print m
-    buffer = StringIO()
-    c = pycurl.Curl()
-    c.setopt(c.URL, 'http://www.youtube.com')
-    c.setopt(c.WRITEDATA, buffer)
-    c.perform()
-    c.close()
 
-    body = buffer.getvalue()
-    # Body is a string in some encoding.
-    # In Python 2, we can print it without knowing what the encoding is.
-    print(body)
-
-    extractor = MyYoutubeExtractor();
+    extractor = MyYoutubeExtractor(useproxy=True);
     youtubeie = YoutubeIE();
     url = "https://www.youtube.com/watch?v=79CmjcIYfas";
     video_id = "HGxRiReJQdk";
@@ -80,7 +69,7 @@ if __name__ == '__main__':
         # print resp.info()  # headers
         # print resp.read()  # content
 
-        dic = extractor.extractVideo("https://www.youtube.com/watch?v=79CmjcIYfas")
+        dic = extractor.extractVideo("https://www.youtube.com/watch?v=RDZg9I9uAlc")
         print(dic)
 
     else:

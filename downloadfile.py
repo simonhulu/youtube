@@ -21,6 +21,7 @@ class YoutubeDownloadTask(MongoModel):
     vid = fields.CharField(required=True)
     status = fields.IntegerField(required=True)
     resultfilepath  = fields.CharField()
+    progress = fields.IntegerField()
     class Meta:
         collection_name = "youtube_downloadTask"
     # def __init__(self,type,status,vid):

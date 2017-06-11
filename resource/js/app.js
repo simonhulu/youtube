@@ -32,6 +32,8 @@ function parseURL(url) {
         var formats ;
         var videotitle;
         var subtitles;
+        var bestaudio;
+        var bestvideo;
 
         $('.showbtn').click(function(e){
             var videoUrl = $('#videourl').val().trim();
@@ -86,6 +88,8 @@ function parseURL(url) {
                 formats = res['formats'];
                 subtitles = res['subtitles'];
                 videotitle = res['title'];
+                bestvideo = res['best_video'];
+                bestaudio = res['best_audio'];
                 var bestFormat = formats[formats.length-1];
                 vurl = bestFormat['url'] ;
                 $('#ytvideo video').attr('src',vurl);
@@ -125,6 +129,10 @@ function parseURL(url) {
                         des = "Youtube Video <b>High Quality ("+formatnote+")</b>, Resolution"+resolution+":, Size : "+filesizeinmb+"mb "
                     }
                     $('.videolist').append($("<div class='radio'><label><input type='radio' name='optradio' value="+i+">"+des+"</label></div>").click(selectdownload))
+                }
+                if (bestaudio && bestvideo)
+                {
+                $('.videolist').append($("<div class='radio'><label><input type='radio' name='optradio' value="+1080+">Youtube Video <b>High Quality (1080p)</label></div>").click(selectdownload))
                 }
                 if(subtitles)
                 {
@@ -175,8 +183,27 @@ function parseURL(url) {
         $('.downloadvidebtn').click(function(e){
             e.preventDefault();
             var href = $(this).attr('href');
+            if (href.indexOf("record1080") != -1)
+            {
+                record1080();
+                return;
+            }
             location.href = href;
         })
+
+
+        function record1080()
+        {
+            var videoUrl = $('#videourl').val().trim();
+            var videoId = parseURL(videoUrl).searchObject.v
+            if(videoId == "" || !videoId)
+            {
+                alert("Invalid youtube link");
+                return;
+            }
+              window.open("/record/"+videoId+"/", '_blank');
+
+        }
 
         function subtitledownload(){
 //            var subtitle = subtitles[0];
@@ -189,9 +216,17 @@ function parseURL(url) {
 
         function selectdownload(){
             var index = $('.radio input:checked').val();
-            var format = formats[index];
-            var ext = format['ext'];
-            $('.downloadvidebtn').attr('href',format['url']+"&title="+(videotitle+"."+ext));
+            var format;
+            var ext;
+            if (index == 1080)
+            {
+                $('.downloadvidebtn').attr('href',"/record1080");
+            }else{
+                format = formats[index];
+                ext = format['ext'];
+                 $('.downloadvidebtn').attr('href',format['url']+"&title="+(videotitle+"."+ext));
+            }
+
         }
 
 

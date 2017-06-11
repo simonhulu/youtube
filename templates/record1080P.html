@@ -4,19 +4,86 @@
     <meta charset="UTF-8">
     <title></title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/app.css" rel="stylesheet">
+    <style>
+        .myProgress {
+            width: 100%;
+            background-color: grey;
+            margin-top: 50px;
+        }
+        .myBar {
+            width: 0%;
+            height: 50px;
+            background-color: #4CAF50;
+            text-align: center; /* To center it horizontally (if you want) */
+            line-height: 30px; /* To center it vertically */
+            color: white;
+        }
+
+    </style>
 </head>
 <body>
-<div class="progress progress-striped active">
-  <div class="progress-bar progress-bar-success" role="progressbar" data-transitiongoal="40"></div>
+<div class="myProgress">
+  <div class="myBar savedProgressbar">0%</div>
 </div>
+
+<div class="myProgress">
+  <div class="myBar convertedProgressbar">0%</div>
+</div>
+<a class="btn btn-default" href="/downloadtask?taskid={{taskid}}" style="background-color:#34a087;margin-top: 50px;display:none;">DOWNLOAD</a>
 
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap-progressbar.min.js"></script>
 <script>
 $(document).ready(function() {
-  $('.progress .progress-bar').progressbar();
+    var progress = 0 ;
+    var nr = setInterval(fetctsaved,5000);
+    var convertnr;
+    function fetctsaved(){
+        $.ajax({type: "POST", url:"/downloadProgress",data: { taskid:"{{taskid}}" }}).done(function(res) {
+                if (res.status != 0)
+                {
 
+                     clearInterval(nr);
+                     alert("Download failed,please refresh");
+                }else{
+                    progress = res.res.progress;
+                    if (progress >= 1)
+                    {
+                         clearInterval(nr);
+                         if(!convertnr)
+                         {
+                            convertnr = setInterval(fetchconverted,5000);
+                         }
+                    }
+                    $('.savedProgressbar').width((progress*100)+'%');
+                    $('.savedProgressbar').text((progress*100)+'%');
+                }
+        });
+    }
+
+    function fetchconverted()
+    {
+        $.ajax({type: "POST", url:"/convertProgress",data: { taskid:"{{taskid}}" }}).done(function(res) {
+                if (res.status != 0)
+                {
+                 clearInterval(convertnr);
+                 alert("Download failed,please refresh");
+                }else{
+                    progress = res.res.progress;
+                    console.log(progress);
+                    if (progress >= 1)
+                    {
+                         clearInterval(convertnr);
+                         $('.btn').show()
+                    }
+                    $('.convertedProgressbar').width((progress)+'%');
+                    $('.convertedProgressbar').text((progress)+'%');
+                }
+        });
+    }
 });
 </script>
 </body>

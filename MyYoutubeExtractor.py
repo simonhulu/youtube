@@ -20,7 +20,6 @@ from selenium.common.exceptions import  *
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from fake_useragent import UserAgent
-from flask import  current_app
 import requests
 import xml
 compiled_regex_type = type(re.compile(''))
@@ -754,9 +753,9 @@ class MyYoutubeExtractor(InfoExtractor):
     # proxies = {"http":"http://127.0.0.1:8118",
     #            "https": "https://127.0.0.1:8118"}
 
-    def __init__(self):
+    def __init__(self,useproxy=False):
         self._player_cache = {}
-
+        self.useproxy = useproxy
 
     def report_rtmp_download(self):
         """Indicate the download will use the RTMP protocol."""
@@ -779,7 +778,7 @@ class MyYoutubeExtractor(InfoExtractor):
         # Configuration
         ua = UserAgent()
         header = {'User-Agent':str(ua.ie)}
-        if current_app.config['USEPROXY']:
+        if self.useproxy:
             webcontent = requests.get(url,header,verify=True,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
         else:
             webcontent = requests.get(url, header, verify=True)
@@ -1648,7 +1647,6 @@ class MyYoutubeExtractor(InfoExtractor):
 
     def _get_subtitles(self, video_id, webpage):
         try:
-
             subs_doc = self.downloadpage('https://video.google.com/timedtext?hl=en&type=list&v=%s' % video_id)
         except ExtractorError as err:
             # self._downloader.report_warning('unable to download video subtitles: %s' % error_to_compat_str(err))
@@ -1694,10 +1692,10 @@ class MyYoutubeExtractor(InfoExtractor):
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
                 url = d['url'];
-                if current_app.config['USEPROXY']:
+                if self.useproxy:
                     response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
                 else:
-                    response = requests.head(url)
+                     response = requests.head(url)
                 d['filesize']  =  float(response.headers['Content-Length'])
                 wformats.append(d)
         audio_formats = [ f for f in dic['formats']
