@@ -57,4 +57,7 @@ class FFMPegRunner(object):
         return 100 if percent > 100 else percent
 
     def time2sec(self, search):
-        return sum([i**(2-i) * int(search.group(i+1)) for i in xrange(3)])
+        hours = int(search.group(1))
+        minutes = int(search.group(2))
+        sec = int(search.group(3))
+        return  hours*3600+minutes*60+sec
