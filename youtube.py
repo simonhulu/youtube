@@ -396,6 +396,8 @@ def startconvert(downloaddata):
                 else:
                     task.status = int(YoutubeTaskStatus.convertdone)
                     task.save()
+                    task.progress = 100
+                    g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
                     print "======================finish_handler"
             try:
                 runner.run_session(command, status_handler=status_handler,finish_handler=finish_handler)
