@@ -68,15 +68,9 @@ if __name__ == '__main__':
         # resp = br.open("http://www.google.com")
         # print resp.info()  # headers
         # print resp.read()  # content
-        re_duration = re.compile('Duration: (\d{2}):(\d{2}):(\d{2}).(\d{2})[^\d]*', re.U)
-        re_position = re.compile('time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})\d*', re.U | re.I)
-        duration_match = re_position.search("frame=15720 fps=10476 q=-1.0 size=  169021kB time=00:10:28.72 bitrate=2202")
-        hours = int(duration_match.group(1))
-        minutes = int(duration_match.group(2))
-        sec = int(duration_match.group(3))
-        print  hours*3600+minutes*60+sec
-        # dic = extractor.extractVideo("https://www.youtube.com/watch?v=RDZg9I9uAlc")
-        # print(dic)
+
+        dic = extractor.extractVideo("https://youtu.be/f23QAm83pno")
+        print(dic)
 
     else:
         dic =  extractor.bestVideo(url)

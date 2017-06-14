@@ -113,6 +113,20 @@ def record(vid):
                     return render_template("record1080P.html",taskid =  task._id)
     return render_template('record1080P.html',taskid="no taskid")
 
+@app.route('/validlink/',methods = ['GET', 'POST'])
+def validlink():
+    youtubeUrl = request.form['url'];
+    imeilires = Imeili100Result()
+    try:
+       vid =  extractor.extract_id(youtubeUrl)
+    except:
+        imeilires.status = int(Imeili100ResultStatus.failed)
+        imeilires.res = {"errMsg":"invalid Link"};
+        return jsonresponse(imeilires)
+    imeilires.status = int(Imeili100ResultStatus.ok)
+    imeilires.res = {"vid":vid}
+    return jsonresponse(imeilires)
+
 @app.route('/record1080/',methods = ['GET', 'POST'])
 def record1080():
     vid = request.form['vid'];
@@ -278,17 +292,13 @@ def convertProgress():
 def getVideoUrl():
 
     youtubeUrl = request.form['url'];
-    regex = r"(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)"
-    pattern = re.compile(regex)
-    m = pattern.search(youtubeUrl)
-
     imeilires = Imeili100Result()
-
-    if m == None or m.group(1) == None:
+    try:
+       vid =  extractor.extract_id(youtubeUrl)
+    except:
         imeilires.status = int(Imeili100ResultStatus.failed)
         imeilires.res = {"errMsg":"invalid URL"};
         return jsonresponse(imeilires)
-    vid = m.group(1)
     youtubeUrl = "https://www.youtube.com/watch?v=" + vid
     vurljsonstr = g_redis.get(vid)
     vurl = None

@@ -28,6 +28,8 @@ function parseURL(url) {
     var resizeW;
     var resizeH;
     var canvas = document.getElementById("canvas");
+    var vid ;
+    var selectedFormat;
     $(document).ready(function(){
         var formats ;
         var videotitle;
@@ -35,10 +37,9 @@ function parseURL(url) {
         var bestaudio;
         var bestvideo;
 
-        $('.showbtn').click(function(e){
-            var videoUrl = $('#videourl').val().trim();
 
-            var videoId = parseURL(videoUrl).searchObject.v
+        function parseVidurl(videoId)
+        {
             if(videoId == "" || !videoId)
             {
                 alert("Invalid youtube link");
@@ -72,12 +73,11 @@ function parseURL(url) {
                     }
                 })(imgObj);
                 img.src = url;
-
             }
-            var $this = $(this);
-            $this.button('loading');
+            $(".showbtn").button('loading');
+            var videoUrl = "https://www.youtube.com/watch?v="+videoId
             $.ajax({type: "POST", url:"/getVideoUrl",data: { url: encodeURI(videoUrl) }}).done(function(res) {
-                $this.button('reset');
+                $(".showbtn").button('reset');
                 if(res.status !=0)
                 {
                     var errMsg = res.res['errMsg'];
@@ -153,9 +153,26 @@ function parseURL(url) {
 
             }).fail(function(){
                alert("failed");
-               $this.button('reset')
+               $(".showbtn").button('reset')
             });
-        })
+        }
+
+        $('.showbtn').click(function(e){
+                var videoUrl = $('#videourl').val().trim();
+                $.ajax({type: "POST", url:"/validlink/",data: { url: encodeURI(videoUrl) }}).done(function(res) {
+                    if(res.status !=0)
+                    {
+                        var errMsg = res.res['errMsg'];
+                        alert(errMsg);
+                        return;
+                    }
+                    var res = res.res;
+                    vid = res.vid;
+                    parseVidurl(vid);
+                }).fail(function(error){
+
+                });
+        });
 
         $('#snap').bind('click',function(){
             $('#mainshot').hide();
@@ -182,26 +199,27 @@ function parseURL(url) {
 
         $('.downloadvidebtn').click(function(e){
             e.preventDefault();
+            console.log($(this))
             var href = $(this).attr('href');
             if (href.indexOf("record1080") != -1)
             {
                 record1080();
+                ga('send', 'event', 'Videos', 'Download', "1080",vid);
                 return;
             }
+            ga('send', 'event', 'Videos', 'Download', selectedFormat,vid);
             location.href = href;
         })
 
 
         function record1080()
         {
-            var videoUrl = $('#videourl').val().trim();
-            var videoId = parseURL(videoUrl).searchObject.v
-            if(videoId == "" || !videoId)
+            if(vid == "" || !vid)
             {
                 alert("Invalid youtube link");
                 return;
             }
-              window.open("/record/"+videoId+"/", '_blank');
+              window.open("/record/"+vid+"/", '_blank');
 
         }
 
@@ -216,14 +234,18 @@ function parseURL(url) {
 
         function selectdownload(){
             var index = $('.radio input:checked').val();
+            debugger;
             var format;
             var ext;
             if (index == 1080)
             {
+                selectedFormat = "1080"
+                ext ="mp4"
                 $('.downloadvidebtn').attr('href',"/record1080");
             }else{
                 format = formats[index];
                 ext = format['ext'];
+                selectedFormat = format["format_note"];
                  $('.downloadvidebtn').attr('href',format['url']+"&title="+(videotitle+"."+ext));
             }
 
