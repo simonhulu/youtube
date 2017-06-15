@@ -39,7 +39,7 @@
 <script>
 $(document).ready(function() {
     var progress = 0 ;
-    var nr = setInterval(fetctsaved,5000);
+    var nr = setInterval(fetctsaved,1000);
     var convertnr;
     function fetctsaved(){
         $.ajax({type: "POST", url:"/downloadProgress",data: { taskid:"{{taskid}}" }}).done(function(res) {
@@ -57,7 +57,7 @@ $(document).ready(function() {
                          clearInterval(nr);
                          if(!convertnr)
                          {
-                            convertnr = setInterval(fetchconverted,5000);
+                            convertnr = setInterval(fetchconverted,1000);
                          }
                     }
 
