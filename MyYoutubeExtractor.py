@@ -1218,7 +1218,8 @@ class MyYoutubeExtractor(InfoExtractor):
             video_uploader_id = mobj.group('uploader_id')
             video_uploader_url = mobj.group('uploader_url')
         else:
-            self._downloader.report_warning('unable to extract uploader nickname')
+            # self._downloader.report_warning('unable to extract uploader nickname')
+            print('unable to extract uploader nickname')
 
         # thumbnail image
         # We try first to get a high quality image:
@@ -1227,7 +1228,8 @@ class MyYoutubeExtractor(InfoExtractor):
         if m_thumb is not None:
             video_thumbnail = m_thumb.group(1)
         elif 'thumbnail_url' not in video_info:
-            self._downloader.report_warning('unable to extract video thumbnail')
+            # self._downloader.report_warning('unable to extract video thumbnail')
+            print('unable to extract video thumbnail')
             video_thumbnail = None
         else:  # don't panic if we can't find it
             video_thumbnail = compat_urllib_parse_unquote_plus(video_info['thumbnail_url'][0])
@@ -1569,7 +1571,8 @@ class MyYoutubeExtractor(InfoExtractor):
         player_config = self.get_ytplayer_config(video_id, webpage)
         err_msg = 'Couldn\'t find automatic captions for %s' % video_id
         if not player_config:
-            self._downloader.report_warning(err_msg)
+            # self._downloader.report_warning(err_msg)
+            print(err_msg)
             return {}
         try:
             args = player_config['args']
@@ -1586,7 +1589,8 @@ class MyYoutubeExtractor(InfoExtractor):
                 caption_list = self._download_xml(list_url, video_id)
                 original_lang_node = caption_list.find('track')
                 if original_lang_node is None:
-                    self._downloader.report_warning('Video doesn\'t have automatic captions')
+                    # self._downloader.report_warning('Video doesn\'t have automatic captions')
+                    print('Video doesn\'t have automatic captions')
                     return {}
                 original_lang = original_lang_node.attrib['lang_code']
                 caption_kind = original_lang_node.attrib.get('kind', '')

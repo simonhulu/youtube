@@ -1,3 +1,20 @@
+        .fb-messenger {
+            margin: 30px 5px 20px;
+        }
+        .fb-messenger a {
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .fb-messenger span {
+            border-radius: 4px;
+            background: #0084ff;
+            color: #fff;
+            font-size: 13px;
+            padding: 6px 8px;
+            display: inline-block;
+            font-family: helvetica, arial, sans-serifnn;
+            white-space: nowrap;
+        }
         .mycontainer{
             padding-right: 0px;
             padding-left: 0px;
