@@ -11,7 +11,7 @@ class YoutubeDownloadTaskType(IntEnum):
     unknow, onlyVideo, onlyAudio,merge1080P = range(4)
 
 class YoutubeDownloadStatus(IntEnum):
-    unknow,error, init, start,downloading,done = range(6)
+    unknow,error, init, start,downloading,done,discard = range(7)
 
 class YoutubeTaskStatus(IntEnum):
     unknow,error, init, start,downloading,downloadDone,converting,convertdone,converterror = range(9)

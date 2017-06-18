@@ -360,6 +360,17 @@ def download(downloaddata):
     print "download done====================" + downloaddata.filestorepath
     startconvert(downloaddata)
 
+def deleteDownloaddata(downloaddata):
+    absfilepath = tmpstorepath+ downloaddata.filestorepath
+    if os.path.isfile(absfilepath) and  downloaddata.downloadStatus == int(YoutubeDownloadStatus.done) and downloaddata.downloadStatus != int(YoutubeDownloadStatus.discard):
+        os.remove(absfilepath)
+        downloaddata.downloadStatus = int(YoutubeDownloadStatus.discard);
+        downloaddata.save();
+        return True
+    else:
+        return False
+
+
 def startconvert(downloaddata):
 
     task = downloaddata.task
@@ -392,14 +403,15 @@ def startconvert(downloaddata):
             re_position = re.compile('time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})\d*', re.U | re.I)
             command = "ffmpeg -i {videofile} -i {audiofile} -map 0 -map 1 -acodec copy -vcodec copy {output}".format(videofile = (tmpstorepath+videofile.filestorepath),audiofile=(tmpstorepath+audiofile.filestorepath),output=output)
             runner = FFMPegRunner()
-            print command
             def status_handler(old, new):
-                print "====================From {0} to {1}".format(old, new)
                 task.progress = new
                 g_redis.set(task._id,jsonpickle.encode(task,unpicklable=False))
+                g_redis.expire(task._id, 3600)
                 if new == 100 :
                     task.status = int(YoutubeTaskStatus.convertdone)
                     task.save()
+                    deleteDownloaddata(videofile)
+                    deleteDownloaddata(audiofile)
             def finish_handler(err):
                 if err:
                     task.status = int(YoutubeTaskStatus.converterror)
@@ -409,7 +421,9 @@ def startconvert(downloaddata):
                     task.save()
                     task.progress = 100
                     g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
-                    print "======================finish_handler"
+                    g_redis.expire(task._id, 3600)
+                    deleteDownloaddata(videofile)
+                    deleteDownloaddata(audiofile)
             try:
                 runner.run_session(command, status_handler=status_handler,finish_handler=finish_handler)
             except OSError:
