@@ -22,6 +22,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from fake_useragent import UserAgent
 import requests
 import xml
+import pycurl
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -1695,12 +1696,13 @@ class MyYoutubeExtractor(InfoExtractor):
         wformats = []
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
-                url = d['url'];
-                if self.useproxy:
-                    response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
-                else:
-                     response = requests.head(url)
-                d['filesize']  =  float(response.headers['Content-Length'])
+                # url = d['url'];
+                # if self.useproxy:
+                #     response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
+                # else:
+                #      response = requests.head(url)
+                # d['filesize']  =  float(response.headers['Content-Length'])
+                # print "========================"+str(response.headers['Content-Length'])
                 wformats.append(d)
         audio_formats = [ f for f in dic['formats']
             if f.get('vcodec') == 'none']

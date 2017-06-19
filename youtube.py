@@ -248,7 +248,11 @@ def downloadProgress():
                 else:
                     totle = videofile.contentlength + audiofile.contentlength
                     savedBytes = os.path.getsize(tmpstorepath+videofile.filestorepath) + os.path.getsize(tmpstorepath+audiofile.filestorepath)
-                    progress = float("{0:.2f}".format(float(savedBytes)/float(totle)));
+                    try:
+                        progress = float("{0:.2f}".format(float(savedBytes)/float(totle)))
+                    except Exception as e:
+                        progress = 0 ;
+                        print "exception========================================="
                     imeilires.status = int(Imeili100ResultStatus.ok)
                     imeilires.res = {"progress": progress};
                     return jsonresponse(imeilires)
@@ -322,6 +326,28 @@ def getVideoUrl():
 
     return jsonresponse(imeilires)
 
+class ProgressStorage:
+    def __init__(self,downloadata):
+        self.contents = ''
+        self.line = 0
+        self.downloadata = downloadata
+        self.download_t = 0 ;
+
+    def progress(self,download_t, download_d, upload_t, upload_d):
+        if self.download_t <=0 :
+            self.download_t = download_t
+            if self.download_t > 0:
+                self.downloadata.contentlength= self.download_t
+                self.downloadata.save()
+    def store(self, buf):
+        self.line = self.line + 1
+        self.contents = "%s%i: %s" % (self.contents, self.line, buf)
+        # print self.contents
+
+    def __str__(self):
+        return self.contents
+
+
 def download(downloaddata):
     downloaddata.downloadStatus = int(YoutubeDownloadStatus.start)
     downloaddata.save()
@@ -335,7 +361,10 @@ def download(downloaddata):
     c.setopt(pycurl.CONNECTTIMEOUT, 30)
     c.setopt(pycurl.TIMEOUT, 300)
     c.setopt(pycurl.NOSIGNAL, 1)
+    c.setopt(c.NOPROGRESS, False)
     c.setopt(pycurl.URL,url)
+    s = ProgressStorage(downloaddata)
+    c.setopt(pycurl.XFERINFOFUNCTION, s.progress)
     if app.config['USEPROXY']:
         c.setopt(pycurl.PROXYTYPE,pycurl.PROXYTYPE_HTTP)
         c.setopt(pycurl.PROXY, "127.0.0.1")
@@ -346,6 +375,10 @@ def download(downloaddata):
     c.url = url
     try:
         c.perform()
+        contentlength = c.getinfo(c.CONTENT_LENGTH_DOWNLOAD)
+        print "contentlength============"+str(contentlength)
+        downloaddata.contentlength = contentlength
+        downloaddata.save()
     except pycurl.error,e:
         print "Posting to %s resulted in error: %s" % (url, e)
         downloaddata.downloadStatus = int(YoutubeDownloadStatus.error)
@@ -363,6 +396,7 @@ def download(downloaddata):
 def deleteDownloaddata(downloaddata):
     absfilepath = tmpstorepath+ downloaddata.filestorepath
     if os.path.isfile(absfilepath) and  downloaddata.downloadStatus == int(YoutubeDownloadStatus.done) and downloaddata.downloadStatus != int(YoutubeDownloadStatus.discard):
+        print "delete"+absfilepath
         os.remove(absfilepath)
         downloaddata.downloadStatus = int(YoutubeDownloadStatus.discard);
         downloaddata.save();
@@ -410,8 +444,8 @@ def startconvert(downloaddata):
                 if new == 100 :
                     task.status = int(YoutubeTaskStatus.convertdone)
                     task.save()
-                    # deleteDownloaddata(videofile)
-                    # deleteDownloaddata(audiofile)
+                    deleteDownloaddata(videofile)
+                    deleteDownloaddata(audiofile)
             def finish_handler(err):
                 if err:
                     task.status = int(YoutubeTaskStatus.converterror)
@@ -422,8 +456,8 @@ def startconvert(downloaddata):
                     task.progress = 100
                     g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
                     g_redis.expire(task._id, 3600)
-                    # deleteDownloaddata(videofile)
-                    # deleteDownloaddata(audiofile)
+                    deleteDownloaddata(videofile)
+                    deleteDownloaddata(audiofile)
             task.progress = 0
             g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
             g_redis.expire(task._id, 3600)

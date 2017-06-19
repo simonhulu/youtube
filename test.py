@@ -50,6 +50,13 @@ if __name__ == '__main__':
     # m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
     # print m
 
+
+    try:
+        c = 5/0
+    except Exception as e:
+        c = 0
+    print c
+
     extractor = MyYoutubeExtractor(useproxy=True);
     youtubeie = YoutubeIE();
     url = "https://www.youtube.com/watch?v=79CmjcIYfas";
