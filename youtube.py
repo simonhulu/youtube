@@ -424,6 +424,9 @@ def startconvert(downloaddata):
                     g_redis.expire(task._id, 3600)
                     # deleteDownloaddata(videofile)
                     # deleteDownloaddata(audiofile)
+            task.progress = 0
+            g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
+            g_redis.expire(task._id, 3600)
             try:
                 runner.run_session(command, status_handler=status_handler,finish_handler=finish_handler)
             except OSError:
