@@ -410,8 +410,8 @@ def startconvert(downloaddata):
                 if new == 100 :
                     task.status = int(YoutubeTaskStatus.convertdone)
                     task.save()
-                    deleteDownloaddata(videofile)
-                    deleteDownloaddata(audiofile)
+                    # deleteDownloaddata(videofile)
+                    # deleteDownloaddata(audiofile)
             def finish_handler(err):
                 if err:
                     task.status = int(YoutubeTaskStatus.converterror)
@@ -422,8 +422,8 @@ def startconvert(downloaddata):
                     task.progress = 100
                     g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
                     g_redis.expire(task._id, 3600)
-                    deleteDownloaddata(videofile)
-                    deleteDownloaddata(audiofile)
+                    # deleteDownloaddata(videofile)
+                    # deleteDownloaddata(audiofile)
             try:
                 runner.run_session(command, status_handler=status_handler,finish_handler=finish_handler)
             except OSError:
