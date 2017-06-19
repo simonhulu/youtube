@@ -234,7 +234,6 @@ function parseURL(url) {
 
         function selectdownload(){
             var index = $('.radio input:checked').val();
-            debugger;
             var format;
             var ext;
             if (index == 1080)

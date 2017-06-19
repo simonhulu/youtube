@@ -277,7 +277,7 @@ def convertProgress():
     imeilires = Imeili100Result()
     progress = 0;
     if taskid:
-        taskjsonstr =  g_redis.get(taskid)
+        taskjsonstr = g_redis.get(taskid)
         if taskjsonstr:
             taskdic = jsonpickle.decode(taskjsonstr)
             progress =  taskdic["progress"]
