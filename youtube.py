@@ -130,12 +130,13 @@ def validlink():
 
 @app.route('/cleandownload/',methods = ['GET', 'POST'])
 def cleandownload():
-    files =  YoutubeFileDownloadData.objects.get({})
+    files =  YoutubeFileDownloadData.objects.all()
     for data in files:
         try:
             deleteDownloaddata(data)
         except Exception as e:
-            print e
+            return e.message
+    return "success"
 
 @app.route('/record1080/',methods = ['GET', 'POST'])
 def record1080():
