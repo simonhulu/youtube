@@ -127,6 +127,16 @@ def validlink():
     imeilires.res = {"vid":vid}
     return jsonresponse(imeilires)
 
+
+@app.route('/cleandownload/',methods = ['GET', 'POST'])
+def cleandownload():
+    files =  YoutubeFileDownloadData.objects.get({})
+    for data in files:
+        try:
+            deleteDownloaddata(data)
+        except Exception as e:
+            print e
+
 @app.route('/record1080/',methods = ['GET', 'POST'])
 def record1080():
     vid = request.form['vid'];
@@ -245,6 +255,10 @@ def downloadProgress():
                     imeilires.status = int(Imeili100ResultStatus.ok)
                     imeilires.res = {"progress": 1};
                     return jsonresponse(imeilires)
+                elif videofile.downloadStatus == YoutubeDownloadStatus.error or videofile.downloadStatus == YoutubeDownloadStatus.error:
+                    imeilires.status = int(Imeili100ResultStatus.failed)
+                    imeilires.res = {"errMsg": "task is error"};
+                    return jsonresponse(imeilires)
                 else:
                     totle = videofile.contentlength + audiofile.contentlength
                     savedBytes = os.path.getsize(tmpstorepath+videofile.filestorepath) + os.path.getsize(tmpstorepath+audiofile.filestorepath)
@@ -252,7 +266,6 @@ def downloadProgress():
                         progress = float("{0:.2f}".format(float(savedBytes)/float(totle)))
                     except Exception as e:
                         progress = 0 ;
-                        print "exception========================================="
                     imeilires.status = int(Imeili100ResultStatus.ok)
                     imeilires.res = {"progress": progress};
                     return jsonresponse(imeilires)
@@ -373,25 +386,25 @@ def download(downloaddata):
     c.setopt(pycurl.WRITEDATA,c.fp)
     c.filename = destfilepath;
     c.url = url
+    task = downloaddata.task;
     try:
         c.perform()
         contentlength = c.getinfo(c.CONTENT_LENGTH_DOWNLOAD)
         print "contentlength============"+str(contentlength)
         downloaddata.contentlength = contentlength
+        downloaddata.downloadStatus = int(YoutubeDownloadStatus.done)
         downloaddata.save()
+        print "download done====================" + downloaddata.filestorepath
+        startconvert(downloaddata)
     except pycurl.error,e:
         print "Posting to %s resulted in error: %s" % (url, e)
         downloaddata.downloadStatus = int(YoutubeDownloadStatus.error)
         downloaddata.save()
-        task =  downloaddata.task;
         task.status = int(YoutubeTaskStatus.error)
-        task.save();
-        return
+        task.save()
+        print "download error====================" + downloaddata.filestorepath
     c.close()
-    downloaddata.downloadStatus = int(YoutubeDownloadStatus.done)
-    downloaddata.save()
-    print "download done====================" + downloaddata.filestorepath
-    startconvert(downloaddata)
+
 
 def deleteDownloaddata(downloaddata):
     absfilepath = tmpstorepath+ downloaddata.filestorepath
@@ -403,6 +416,7 @@ def deleteDownloaddata(downloaddata):
         return True
     else:
         return False
+
 
 
 def startconvert(downloaddata):
