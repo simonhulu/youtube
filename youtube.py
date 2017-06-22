@@ -377,7 +377,8 @@ def download(downloaddata):
     c.setopt(c.NOPROGRESS, False)
     c.setopt(pycurl.URL,url)
     s = ProgressStorage(downloaddata)
-    c.setopt(pycurl.XFERINFOFUNCTION, s.progress)
+
+    c.setopt(c.XFERINFOFUNCTION, s.progress)
     if app.config['USEPROXY']:
         c.setopt(pycurl.PROXYTYPE,pycurl.PROXYTYPE_HTTP)
         c.setopt(pycurl.PROXY, "127.0.0.1")
