@@ -222,6 +222,11 @@ function parseURL(url) {
               window.open("/record/"+vid+"/", '_blank');
 
         }
+        $("#videourl").keyup(function(event){
+            if(event.keyCode == 13){
+                $(".showbtn").click();
+            }
+        });
 
         function subtitledownload(){
 //            var subtitle = subtitles[0];
