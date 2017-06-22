@@ -252,7 +252,7 @@ def downloadProgress():
                     imeilires.status = int(Imeili100ResultStatus.failed)
                     imeilires.res = {"errMsg": "task is error"};
                     return jsonresponse(imeilires)
-                if videofile.downloadStatus == YoutubeDownloadStatus.done and videofile.downloadStatus == YoutubeDownloadStatus.done:
+                if videofile.downloadStatus >= YoutubeDownloadStatus.done  and videofile.downloadStatus >= YoutubeDownloadStatus.done:
                     imeilires.status = int(Imeili100ResultStatus.ok)
                     imeilires.res = {"progress": 1};
                     return jsonresponse(imeilires)
