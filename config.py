@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 DEBUG = True # 启动Flask的Debug模式
-PRODUCT = False
+PRODUCT = True
 if PRODUCT:
     USEPROXY = False
     TMPSTOREPATH = "/mnt/blockstorage/media/video/"
