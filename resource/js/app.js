@@ -157,6 +157,12 @@ function parseURL(url) {
             });
         }
 
+        $("#videourl").keyup(function(event){
+            if(event.keyCode == 13){
+                $(".showbtn").click();
+            }
+        });
+
         $('.showbtn').click(function(e){
                 var videoUrl = $('#videourl').val().trim();
                 $.ajax({type: "POST", url:"/validlink/",data: { url: encodeURI(videoUrl) }}).done(function(res) {
@@ -222,11 +228,7 @@ function parseURL(url) {
               window.open("/record/"+vid+"/", '_blank');
 
         }
-        $("#videourl").keyup(function(event){
-            if(event.keyCode == 13){
-                $(".showbtn").click();
-            }
-        });
+
 
         function subtitledownload(){
 //            var subtitle = subtitles[0];

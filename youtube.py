@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import Flask,Response
-from flask import request
+from flask import g,request,session
 from flask import render_template
+from functools import wraps
 import youtube_dl
 from flask import jsonify
 import json
@@ -32,6 +33,7 @@ import jsonpickle
 from youtube_dl.utils import *
 from flask import current_app
 from ffmpeg import FFMPegRunner
+from flask_babel import Babel
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -40,7 +42,7 @@ except NameError:
 NO_DEFAULT = object()
 app = Flask(__name__)
 app.config.from_object("config")
-
+babel = Babel(app)
 client = MongoClient()
 db = client['youtube']
 tmpstorepath = app.config['TMPSTOREPATH']
@@ -56,12 +58,81 @@ service_args = [
 # driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver',service_args=service_args)
 
 extractor = MyYoutubeExtractor(useproxy=app.config['USEPROXY']);
+
+# def match_languages(f):
+#     @wraps(f)
+#
+#     def decorated(*args, **kwargs):
+#         '''Decorator to determine preferred language by Accept
+#         Language Header. Switching Languages is provided through
+#         an injected unordered list.
+#         '''
+#
+#         cookie = request.cookies.get("App-Language")
+#         '''Ping flask for available languages'''
+#         AVAILABLE_LOCALES = flask.g.i10n.get_available_locales()
+#         if not cookie in AVAILABLE_LOCALES: cookie = None
+#
+#         if cookie is None:
+#             UA_langs = request.headers.get('Accept-Language').split(",")
+#             matches = filter(lambda x: x.split(";")[0] in AVAILABLE_LOCALES, UA_langs)
+#             lang = matches[0] if matches else AVAILABLE_LOCALES[0]
+#             pass_language()
+#
+#         '''Set best match as global language'''
+#         flask.g.lang = cookie if cookie else lang
+#         return f(*args, **kwargs)
+#
+#     return decorated
+#
+# def pass_language():
+#     @after_this_request
+#     def set_lang_cookie(response):
+#         response.set_cookie('App-Language', flask.g.lang)
+#         return response
+@babel.localeselector
+def get_locale():
+    # if a user is logged in, use the locale from the user settings
+    print "===================="
+    try:
+        language = session['language']
+        print "language======"+language;
+    except KeyError:
+        language = None
+    if language is not None:
+        return language
+    # otherwise try to guess the language from the user accept
+    # header the browser transmits.  We support de/fr/en in this
+    # example.  The best match wins.
+    return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+
+@babel.timezoneselector
+def get_timezone():
+    user = getattr(g, 'user', None)
+    if user is not None:
+        return user.timezone
+
+@app.route('/language/<language>')
+def set_language(language=None):
+    if language in app.config['LANGUAGES']:
+        session['language'] = language
+
+    return redirect("/", code=302)
+
 @app.route('/')
 def hello_world():
+    supported_languages = ["en", "zh"]
+    lang = get_locale()
+    if lang == "zh":
+        return redirect("/cn/", code=302)
     return render_template('youtubescreenshot.html')
 @app.route('/feedback')
 def feedbackpage():
     return render_template('community.html')
+
+@app.route('/cn/')
+def index_cn():
+    return render_template('youtubescreenshot_zh.html')
 
 @app.route('/downloadsrt/')
 def downloadsrt():
@@ -302,6 +373,12 @@ def convertProgress():
             imeilires.status = int(Imeili100ResultStatus.ok)
             imeilires.res = {"progress": progress};
             return jsonresponse(imeilires)
+        else:
+            task = YoutubeDownloadTask.objects.get({"_id":taskid})
+            if task.status > YoutubeTaskStatus.converting:
+                imeilires.status = int(Imeili100ResultStatus.ok)
+                imeilires.res = {"progress": 1};
+                return jsonresponse(imeilires)
     imeilires.status = int(Imeili100ResultStatus.failed)
     imeilires.res = {"errMsg": "task is error"};
     return jsonresponse(imeilires)
@@ -500,7 +577,7 @@ class DownloadYoutubeThread (threading.Thread):
 
 
 if __name__ == '__main__':
-
+    app.secret_key = '123456789'
     app.run(host='0.0.0.0',debug=app.config['DEBUG'])
 
 
