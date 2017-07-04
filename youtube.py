@@ -34,6 +34,7 @@ from youtube_dl.utils import *
 from flask import current_app
 from ffmpeg import FFMPegRunner
 from flask_babel import Babel
+import dropbox
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -43,9 +44,11 @@ NO_DEFAULT = object()
 app = Flask(__name__)
 app.config.from_object("config")
 babel = Babel(app)
+dbx = dropbox.Dropbox('pIR-KPDmuyAAAAAAAAAAETOCjOuDKXGZwqnK8giZ3TQJxEvLMiTD8BYhAb6ptysT')
 client = MongoClient()
 db = client['youtube']
 tmpstorepath = app.config['TMPSTOREPATH']
+dropboxtmpstorepath = app.config['DROPBOXTMPSTOREPATH']
 g_redis = redis.StrictRedis(host='localhost',port=6379,db=0)
 
 service_args = [
@@ -156,11 +159,18 @@ def record(vid):
     if vid:
         #判断数据库里面有没有
         try:
-            task = YoutubeDownloadTask.objects.get({"vid":vid})
+            tasksCursor = YoutubeDownloadTask.objects.raw({"vid":vid,"status":{"$gte":int(YoutubeTaskStatus.convertdone)}})
+            tasks = list(tasksCursor);
+            task = None
+            for itask in tasks:
+                filepath = tmpstorepath + itask.resultfilepath;
+                if os.path.isfile(filepath) :
+                    task = itask;
+                    break;
         except YoutubeDownloadTask.DoesNotExist:
             task = None
         #直接有未完成task 显示下载界面
-        if task and task.status > YoutubeTaskStatus.error:
+        if task:
             return  render_template("record1080P.html",taskid = task._id)
         #没有找到task 创建
 
@@ -209,46 +219,48 @@ def cleandownload():
             return e.message
     return "success"
 
-@app.route('/record1080/',methods = ['GET', 'POST'])
-def record1080():
-    vid = request.form['vid'];
-    imeilires = Imeili100Result()
-    if vid:
-        #判断数据库里面有没有
-
-        try:
-            task = YoutubeDownloadTask.objects.get({"vid":vid})
-        except YoutubeDownloadTask.DoesNotExist:
-            task = None
-        if task and task > YoutubeTaskStatus.error:
-            imeilires.res = task
-            imeilires.status = int(Imeili100ResultStatus.ok);
-            return jsonpickle.encode(imeilires,unpicklable=False)
-
-        vdicstr = g_redis.get(vid)
-        if vdicstr:
-            vdic = json.loads(vdicstr)
-            info = vdic["info"];
-            if info:
-               task =  startRecord(vid,info)
-               if task:
-                   imeilires.res = task
-                   imeilires.status = int(Imeili100ResultStatus.ok);
-                   return jsonpickle.encode(imeilires,unpicklable=False)
-        else:
-            youtubeUrl = "https://www.youtube.com/watch?v=" + vid
-            vurl = extractor.extractVideo(youtubeUrl)
-            if vurl:
-                g_redis.set(vid, json.dumps({"info": vurl}))
-                g_redis.expire(vid, 3600)
-                task = startRecord(vid,vurl)
-                if task:
-                    imeilires.res = task
-                    imeilires.status = int(Imeili100ResultStatus.ok);
-                    return jsonpickle.encode(imeilires,unpicklable=False)
-    imeilires.status = int(Imeili100ResultStatus.failed);
-    imeilires.res = {"errMsg":"error"}
-    return jsonpickle.encode(imeilires,unpicklable=False)
+# @app.route('/record1080/',methods = ['GET', 'POST'])
+# def record1080():
+#     vid = request.form['vid'];
+#     imeilires = Imeili100Result()
+#     if vid:
+#         #判断数据库里面有没有
+#
+#         try:
+#             #,"$gt":
+#             task = YoutubeDownloadTask.objects.get({"vid":vid})
+#         except YoutubeDownloadTask.DoesNotExist:
+#             task = None
+#         if task and task > YoutubeTaskStatus.error :
+#
+#             imeilires.res = task
+#             imeilires.status = int(Imeili100ResultStatus.ok);
+#             return jsonpickle.encode(imeilires,unpicklable=False)
+#
+#         vdicstr = g_redis.get(vid)
+#         if vdicstr:
+#             vdic = json.loads(vdicstr)
+#             info = vdic["info"];
+#             if info:
+#                task =  startRecord(vid,info)
+#                if task:
+#                    imeilires.res = task
+#                    imeilires.status = int(Imeili100ResultStatus.ok);
+#                    return jsonpickle.encode(imeilires,unpicklable=False)
+#         else:
+#             youtubeUrl = "https://www.youtube.com/watch?v=" + vid
+#             vurl = extractor.extractVideo(youtubeUrl)
+#             if vurl:
+#                 g_redis.set(vid, json.dumps({"info": vurl}))
+#                 g_redis.expire(vid, 3600)
+#                 task = startRecord(vid,vurl)
+#                 if task:
+#                     imeilires.res = task
+#                     imeilires.status = int(Imeili100ResultStatus.ok);
+#                     return jsonpickle.encode(imeilires,unpicklable=False)
+#     imeilires.status = int(Imeili100ResultStatus.failed);
+#     imeilires.res = {"errMsg":"error"}
+#     return jsonpickle.encode(imeilires,unpicklable=False)
 
 def startRecord(vid,vinfo):
     betstaudio = vinfo['best_audio'];
@@ -352,6 +364,12 @@ def downloadtask():
     else:
         taskid = request.form['taskid'];
     if taskid:
+        try:
+            task = YoutubeDownloadTask.objects.get({"_id": ObjectId(taskid)})
+        except YoutubeDownloadTask.DoesNotExist:
+            abort(404)
+        if task and task.status > YoutubeTaskStatus.converterror:
+            return redirect(("/" + task.resultfilepath), code=302)
         taskjsonstr = g_redis.get(taskid)
         if taskjsonstr:
             taskdic = jsonpickle.decode(taskjsonstr)
@@ -366,6 +384,16 @@ def convertProgress():
     imeilires = Imeili100Result()
     progress = 0;
     if taskid:
+        try:
+            task = YoutubeDownloadTask.objects.get({"_id": ObjectId(taskid)})
+        except YoutubeDownloadTask.DoesNotExist:
+            imeilires.status = int(Imeili100ResultStatus.failed)
+            imeilires.res = {"errMsg": "task is error"};
+            return jsonresponse(imeilires)
+        if task.status > YoutubeTaskStatus.converterror:
+            imeilires.status = int(Imeili100ResultStatus.ok)
+            imeilires.res = {"progress": 100};
+            return jsonresponse(imeilires)
         taskjsonstr = g_redis.get(taskid)
         if taskjsonstr:
             taskdic = jsonpickle.decode(taskjsonstr)
@@ -374,10 +402,10 @@ def convertProgress():
             imeilires.res = {"progress": progress};
             return jsonresponse(imeilires)
         else:
-            task = YoutubeDownloadTask.objects.get({"_id":taskid})
-            if task.status > YoutubeTaskStatus.converting:
+            task = YoutubeDownloadTask.objects.get({"_id":ObjectId(taskid)})
+            if task.status > YoutubeTaskStatus.converterror:
                 imeilires.status = int(Imeili100ResultStatus.ok)
-                imeilires.res = {"progress": 1};
+                imeilires.res = {"progress": 100};
                 return jsonresponse(imeilires)
     imeilires.status = int(Imeili100ResultStatus.failed)
     imeilires.res = {"errMsg": "task is error"};
@@ -496,7 +524,50 @@ def deleteDownloaddata(downloaddata):
     else:
         return False
 
+def deleteTaskdata(task):
+    if task.type == YoutubeTaskStatus.dropboxdone:
+        file_path = tmpstorepath + task.resultfilepath
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
+def upload2DropBox(task):
+    #刚刚转换完
+    if task.type != YoutubeTaskStatus.dropboxing  :
+        task.type = YoutubeTaskStatus.dropboxing;
+        task.save()
+        file_path = tmpstorepath + task.resultfilepath
+        dest_path = dropboxtmpstorepath + task.resultfilepath
+        f = open(file_path)
+        file_size = os.path.getsize(file_path)
+        CHUNK_SIZE = 4 * 1024 * 1024
+        if file_size <= CHUNK_SIZE:
+
+            dbx.files_upload(f, dest_path)
+            task.type = YoutubeTaskStatus.dropboxdone
+            task.save()
+        else:
+            try:
+                upload_session_start_result = dbx.files_upload_session_start(f.read(CHUNK_SIZE))
+                cursor = dropbox.files.UploadSessionCursor(session_id=upload_session_start_result.session_id,
+                                                           offset=f.tell())
+                commit = dropbox.files.CommitInfo(path=dest_path)
+
+                while f.tell() < file_size:
+                    if ((file_size - f.tell()) <= CHUNK_SIZE):
+                        dbx.files_upload_session_finish(f.read(CHUNK_SIZE),
+                                                              cursor,
+                                                              commit)
+                        task.type = YoutubeTaskStatus.dropboxdone
+                        task.save()
+                    else:
+                        dbx.files_upload_session_append(f.read(CHUNK_SIZE),
+                                                        cursor.session_id,
+                                                        cursor.offset)
+                        cursor.offset = f.tell()
+                        print cursor.offset * 100 / file_size
+            except Exception as e:
+                task.type = YoutubeTaskStatus.dropboxerror
+                task.save()
 
 def startconvert(downloaddata):
 
@@ -539,6 +610,7 @@ def startconvert(downloaddata):
                     task.save()
                     deleteDownloaddata(videofile)
                     deleteDownloaddata(audiofile)
+                    # upload2DropBox(task)
             def finish_handler(err):
                 if err:
                     task.status = int(YoutubeTaskStatus.converterror)
@@ -551,6 +623,7 @@ def startconvert(downloaddata):
                     g_redis.expire(task._id, 3600)
                     deleteDownloaddata(videofile)
                     deleteDownloaddata(audiofile)
+                    # upload2DropBox(task)
             task.progress = 0
             g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
             g_redis.expire(task._id, 3600)

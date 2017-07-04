@@ -14,7 +14,7 @@ class YoutubeDownloadStatus(IntEnum):
     unknow,error, init, start,downloading,done,discard = range(7)
 
 class YoutubeTaskStatus(IntEnum):
-    unknow,error, init, start,downloading,downloadDone,converting,convertdone,converterror = range(9)
+    unknow,error, init, start,downloading,downloadDone,converting,converterror,convertdone,dropboxing,dropboxerror,dropboxdone = range(12)
 
 class YoutubeDownloadTask(MongoModel):
     type = fields.IntegerField(required=True)

@@ -7,6 +7,7 @@ if PRODUCT:
 else:
     USEPROXY = True
     TMPSTOREPATH = "/Users/zhangshijie/Downloads/"
+DROPBOXTMPSTOREPATH = "/media/video/"
 LANGUAGES = {
     'en': 'English',
     'zh': 'Chinese'
