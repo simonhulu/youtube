@@ -357,6 +357,45 @@ def downloadProgress():
     imeilires.res = {"errMsg": "task is error"};
     return jsonresponse(imeilires)
 
+@app.route('/fetchVideo',methods = ['GET', 'POST'])
+def fetchVideo():
+    imeilires = Imeili100Result()
+    if request.method == "GET":
+        vurl = request.args['vurl'];
+    else:
+        vurl = request.form['vurl'];
+    try:
+       vid =  extractor.extract_id(vurl)
+    except:
+        imeilires.status = int(Imeili100ResultStatus.failed)
+        imeilires.res = {"errMsg":"invalid Link"};
+        return jsonresponse(imeilires)
+    youtubeUrl = "https://www.youtube.com/watch?v=" + vid
+    vurljsonstr = g_redis.get(vid)
+    vurl = None
+    if vurljsonstr:
+        info = json.loads(vurljsonstr)
+        if info:
+            vurl = info["info"];
+            imeilires.status = int(Imeili100ResultStatus.ok)
+            custominfo = {"title":vurl['title'],'url':vurl['best_video']['url']}
+            imeilires.res = custominfo;
+            return jsonresponse(imeilires)
+    try:
+        vurl = extractor.extractVideo(youtubeUrl)
+    except ExtractorError as e:
+        imeilires.status = int(Imeili100ResultStatus.failed)
+        imeilires.res = {"errMsg":e.message};
+        return jsonresponse(imeilires)
+    imeilires.status = int(Imeili100ResultStatus.ok)
+    custominfo = {"title": vurl['title'], 'url': vurl['best_video']['url']}
+    imeilires.res = custominfo;
+    return jsonresponse(imeilires)
+    g_redis.set(vid,json.dumps({"info":vurl}))
+    g_redis.expire(vid,3600)
+
+    return jsonresponse(imeilires)
+
 @app.route('/downloadtask',methods = ['GET', 'POST'])
 def downloadtask():
     if request.method == "GET":
