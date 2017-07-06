@@ -226,23 +226,20 @@ def api_message():
     else:
         return "415 Unsupported Media Type ;)"
     """
-    print  request.headers['Content-Type']
     youtubeUrl = None
     try:
-        if request.method == 'GET':
-            youtubeUrl =  request.args['url']
+        if request.values:
+            youtubeUrl = request.values['url']
         else:
-            if 'text/plain' in request.headers['Content-Type'] :
-                abort(400)
-
-            elif 'application/json' in request.headers['Content-Type']:
-                youtubeUrl = request.json['url']
+            if request.data:
+                str = request.data;
+                json = jsonpickle.decode(str)
+                youtubeUrl = json['url']
             else:
-                youtubeUrl = request.form['url']
+                youtubeUrl = request.json['url']
     except Exception as e:
         print  e
         abort(400)
-        print youtubeUrl
     imeilires = Imeili100Result()
     try:
        vid =  extractor.extract_id(youtubeUrl)
