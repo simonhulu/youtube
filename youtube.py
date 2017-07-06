@@ -194,9 +194,55 @@ def record(vid):
                     return render_template("record1080P.html",taskid =  task._id)
     return render_template('record1080P.html',taskid="no taskid")
 
+
+def request_wants_json():
+    best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
+    return best == 'application/json' and request.accept_mimetypes[best] > request.accept_mimetypes['text/html']
+
 @app.route('/validlink/',methods = ['GET', 'POST'])
 def validlink():
-    youtubeUrl = request.form['url'];
+    """
+    request.args: the key/value pairs in the URL query string
+    request.form: the key/value pairs in the body, from a HTML post form, or JavaScript request that isn't JSON encoded
+    request.files: the files in the body, which Flask keeps separate from form. HTML forms must use enctype=multipart/form-data or files will not be uploaded.
+    request.values: combined args and form, preferring args if keys overlap
+    from flask import json
+
+@app.route('/messages', methods = ['POST'])
+def api_message():
+
+    if request.headers['Content-Type'] == 'text/plain':
+        return "Text Message: " + request.data
+
+    elif request.headers['Content-Type'] == 'application/json':
+        return "JSON Message: " + json.dumps(request.json)
+
+    elif request.headers['Content-Type'] == 'application/octet-stream':
+        f = open('./binary', 'wb')
+        f.write(request.data)
+                f.close()
+        return "Binary message written!"
+
+    else:
+        return "415 Unsupported Media Type ;)"
+    """
+    print  request.headers['Content-Type']
+    youtubeUrl = None
+    try:
+        if request.method == 'GET':
+            youtubeUrl =  request.args['url']
+        else:
+            if 'text/plain' in request.headers['Content-Type'] :
+                abort(400)
+
+            elif 'application/json' in request.headers['Content-Type']:
+                youtubeUrl = request.json['url']
+            else:
+                youtubeUrl = request.form['url']
+    except Exception as e:
+        print  e
+        abort(400)
+        print youtubeUrl
     imeilires = Imeili100Result()
     try:
        vid =  extractor.extract_id(youtubeUrl)

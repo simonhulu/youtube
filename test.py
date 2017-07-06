@@ -24,6 +24,7 @@ import requests
 import pycurl
 from StringIO import StringIO
 import dropbox
+import jsonpickle
 compiled_regex_type = type(re.compile(''))
 try:
     compat_str = unicode  # Python 2
@@ -50,6 +51,8 @@ if __name__ == '__main__':
     # youtubeUrl = "www.youtube.com/watch?v=rBJ2OSWFKkA";
     # m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
     # print m
+    print  jsonpickle.decode("asdasdasd",keys=True)
+
     dbx = dropbox.Dropbox('pIR-KPDmuyAAAAAAAAAAETOCjOuDKXGZwqnK8giZ3TQJxEvLMiTD8BYhAb6ptysT')
     for entry in dbx.files_list_folder('').entries:
         print(entry.name)
