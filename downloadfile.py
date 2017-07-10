@@ -1,4 +1,5 @@
 from enum import IntEnum
+
 from pymongo import TEXT
 from pymongo.operations import IndexModel
 from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
@@ -22,6 +23,7 @@ class YoutubeDownloadTask(MongoModel):
     status = fields.IntegerField(required=True)
     resultfilepath  = fields.CharField()
     progress = fields.IntegerField()
+    videoInfo = fields.CharField()
     class Meta:
         collection_name = "youtube_downloadTask"
     # def __init__(self,type,status,vid):
@@ -42,6 +44,7 @@ class YoutubeFileDownloadData(MongoModel):
     downloadStatus = fields.IntegerField(required=True)
     url = fields.CharField(required=True)
     ext = fields.CharField(required=True)
+    format = fields.CharField(required=False)
     task = fields.ReferenceField(YoutubeDownloadTask,required=True)
 
     class Meta:

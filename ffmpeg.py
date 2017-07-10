@@ -48,7 +48,7 @@ class FFMPegRunner(object):
                 percents = new_percents
             if new_percents == 100:
                 if callable(finish_handler):
-                    finish_handler(err=True)
+                    finish_handler(err=False)
 
     def get_percent(self, position, duration):
         if not position or not duration:

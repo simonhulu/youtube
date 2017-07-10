@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Flask,Response
+from flask import Flask,Response,send_file,make_response
 from flask import g,request,session
 from flask import render_template
 from functools import wraps
@@ -7,12 +7,7 @@ import youtube_dl
 from flask import jsonify
 import json
 from Imeili100Result import Imeili100Result,Imeili100ResultStatus
-from selenium import webdriver
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import  *
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.support.ui import WebDriverWait
+from unidecode import unidecode
 from MyYoutubeExtractor import MyYoutubeExtractor
 import pycurl
 from flask import abort, redirect, url_for
@@ -199,6 +194,19 @@ def request_wants_json():
     best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
     return best == 'application/json' and request.accept_mimetypes[best] > request.accept_mimetypes['text/html']
 
+def requestVal(key):
+
+        if request.values:
+            return  request.values[key]
+        else:
+            if request.data:
+                str = request.data;
+                json = jsonpickle.decode(str)
+                return  json[key]
+            else:
+                return  request.json[key]
+
+
 @app.route('/validlink/',methods = ['GET', 'POST'])
 def validlink():
     """
@@ -228,22 +236,16 @@ def api_message():
     """
     youtubeUrl = None
     try:
-        if request.values:
-            youtubeUrl = request.values['url']
-        else:
-            if request.data:
-                str = request.data;
-                json = jsonpickle.decode(str)
-                youtubeUrl = json['url']
-            else:
-                youtubeUrl = request.json['url']
+        youtubeUrl = requestVal('url')
     except Exception as e:
         print  e
         abort(400)
     imeilires = Imeili100Result()
     try:
        vid =  extractor.extract_id(youtubeUrl)
-    except:
+       print vid
+    except Exception as e:
+        print  e
         imeilires.status = int(Imeili100ResultStatus.failed)
         imeilires.res = {"errMsg":"invalid Link"};
         return jsonresponse(imeilires)
@@ -311,10 +313,10 @@ def startRecord(vid,vinfo):
     if betstaudio and betstvideo:
         # 存储task
         task = YoutubeDownloadTask(type=YoutubeDownloadTaskType.merge1080P, status=int(YoutubeTaskStatus.init),
-                                   vid=vid).save()
+                                   vid=vid,videoInfo = jsonpickle.encode(vinfo)).save()
         # Start new Threads
-        videoDownload = preparedownload(vid, int(YoutubeFileType.video), betstvideo['url'], betstvideo['ext'], task)
-        audioDownload = preparedownload(vid, int(YoutubeFileType.audio), betstaudio['url'], betstaudio['ext'], task)
+        videoDownload = preparedownload(vid, int(YoutubeFileType.video), betstvideo['url'], betstvideo['ext'], task,format=jsonpickle.encode(betstvideo))
+        audioDownload = preparedownload(vid, int(YoutubeFileType.audio), betstaudio['url'], betstaudio['ext'], task,format=jsonpickle.encode(betstaudio))
         thread1 = DownloadYoutubeThread(videoDownload)
         thread2 = DownloadYoutubeThread(audioDownload)
         thread1.start()
@@ -339,7 +341,7 @@ def getSaveFullPath():
     filepath = tmpstorepath + getSavePath()
     return filepath
 
-def preparedownload(vid,type,url,ext,task):
+def preparedownload(vid,type,url,ext,task,format=""):
     #创建唯一文件名
     tempfilename = createUniqueFileName(ext=ext);
     filestorepath = getSavePath()
@@ -354,7 +356,7 @@ def preparedownload(vid,type,url,ext,task):
     else:
         response = requests.head(url)
     contentlength = response.headers['Content-Length']
-    downloaddata =  YoutubeFileDownloadData(filestorepath = filepath,contentlength = contentlength,filetype = type,downloadStatus = int(YoutubeDownloadStatus.init),url=url,ext=ext,task=task).save()
+    downloaddata =  YoutubeFileDownloadData(filestorepath = filepath,contentlength = contentlength,filetype = type,downloadStatus = int(YoutubeDownloadStatus.init),url=url,ext=ext,task=task,format=format).save()
     return downloaddata
 
 @app.route('/downloadProgress',methods = ['GET', 'POST'])
@@ -451,12 +453,76 @@ def downloadtask():
         except YoutubeDownloadTask.DoesNotExist:
             abort(404)
         if task and task.status > YoutubeTaskStatus.converterror:
+
+            vid = task.vid;
+            file_basename = "download.mp4"
+            server_path = task.resultfilepath;
+            file_size = 0
+            if os.path.isfile(tmpstorepath + server_path):
+                file_size = os.path.getsize(tmpstorepath + server_path);
+            files = list(YoutubeFileDownloadData.objects.raw({'task': ObjectId(taskid)}))
+            # 全部下载完毕
+            videofile = None
+            for data in files:
+                if data.filetype == int(YoutubeFileType.video):
+                    videofile = data
+                    break
+
+            if videofile:
+                    title = "download"
+                    if task.videoInfo:
+                        try:
+                            info = jsonpickle.decode(task.videoInfo);
+                            title = info['title'];
+                        except Exception as e:
+                            title = "download"
+                    file_basename = title+"." + videofile.ext;
+
+            response = make_response()
+            response.headers['Content-Description'] = 'File Transfer'
+            response.headers['Cache-Control'] = 'no-cache'
+            response.headers['Content-Type'] = 'application/octet-stream'
+            response.headers['Content-Disposition'] = "attachment; filename='%s'" % unidecode(file_basename)
+            response.headers['Content-Length'] = file_size
+            response.headers['X-Accel-Redirect'] = '/downloadvideo/'+server_path  # nginx: http://wiki.nginx.org/NginxXSendfile
+            return response
             return redirect(("/" + task.resultfilepath), code=302)
         taskjsonstr = g_redis.get(taskid)
         if taskjsonstr:
             taskdic = jsonpickle.decode(taskjsonstr)
-            return redirect(("/"+taskdic["resultfilepath"]),code=302)
+            # return redirect(("/"+taskdic["resultfilepath"]),code=302)
+            vid =  taskdic['vid'];
+            vinfo = g_redis.get(vid);
+            file_basename = "download.mp4"
 
+            server_path = taskdic["resultfilepath"];
+            server_path = task.resultfilepath;
+            file_size = os.path.getsize(tmpstorepath +  server_path);
+            files = list(YoutubeFileDownloadData.objects.raw({'task': ObjectId(taskid)}))
+            # 全部下载完毕
+            videofile = None
+            for data in files:
+                if data.filetype >= int(YoutubeFileType.video):
+                    videofile = data
+                    break
+            if videofile:
+                    title = "download"
+                    if task.videoInfo:
+                        try:
+                            info = jsonpickle.decode(task.videoInfo);
+                            title = info['title'];
+                        except Exception as e:
+                            title = "download"
+                    file_basename = title+"." + videofile.ext;
+
+            response = make_response()
+            response.headers['Content-Description'] = 'File Transfer'
+            response.headers['Cache-Control'] = 'no-cache'
+            response.headers['Content-Type'] = 'application/octet-stream'
+            response.headers['Content-Disposition'] = "attachment; filename='%s'" % unidecode(file_basename)
+            response.headers['Content-Length'] = file_size
+            response.headers['X-Accel-Redirect'] = '/downloadvideo/'+server_path  # nginx: http://wiki.nginx.org/NginxXSendfile
+            return response
     abort(404)
 
 
@@ -495,8 +561,11 @@ def convertProgress():
 
 @app.route('/getVideoUrl',methods = ['GET', 'POST'])
 def getVideoUrl():
-
-    youtubeUrl = request.form['url'];
+    youtubeUrl = None;
+    try:
+        youtubeUrl = requestVal('url')
+    except Exception as e:
+        abort(400)
     imeilires = Imeili100Result()
     try:
        vid =  extractor.extract_id(youtubeUrl)
@@ -683,6 +752,7 @@ def startconvert(downloaddata):
             re_position = re.compile('time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})\d*', re.U | re.I)
             command = "ffmpeg -i {videofile} -i {audiofile} -map 0 -map 1 -acodec copy -vcodec copy {output}".format(videofile = (tmpstorepath+videofile.filestorepath),audiofile=(tmpstorepath+audiofile.filestorepath),output=output)
             runner = FFMPegRunner()
+            print  command
             def status_handler(old, new):
                 task.progress = new
                 g_redis.set(task._id,jsonpickle.encode(task,unpicklable=False))
@@ -695,9 +765,11 @@ def startconvert(downloaddata):
                     # upload2DropBox(task)
             def finish_handler(err):
                 if err:
+                    print "==================converterror"
                     task.status = int(YoutubeTaskStatus.converterror)
                     task.save()
                 else:
+                    print "==================convertdone"
                     task.status = int(YoutubeTaskStatus.convertdone)
                     task.save()
                     task.progress = 100
@@ -712,10 +784,10 @@ def startconvert(downloaddata):
             try:
                 runner.run_session(command, status_handler=status_handler,finish_handler=finish_handler)
             except OSError:
-                print 1
+                print "==================converterror"
                 task.status = int(YoutubeTaskStatus.converterror)
             except ValueError:
-                print 2
+                print "==================converterror"
                 task.status = int(YoutubeTaskStatus.converterror)
             task.save()
 

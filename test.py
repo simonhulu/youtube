@@ -12,12 +12,6 @@ from youtube_dl.compat import *
 import socket
 import socks
 import urllib2
-from selenium import webdriver
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import  *
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.support.ui import WebDriverWait
 from MyYoutubeExtractor import MyYoutubeExtractor
 from fake_useragent import UserAgent
 import requests
@@ -38,8 +32,7 @@ service_args = [
     '--proxy=127.0.0.1:1080',
     '--proxy-type=socks5',
     ]
-firefox_capabilities = DesiredCapabilities.CHROME
-firefox_capabilities['marionette'] = True
+
 # driver = webdriver.PhantomJS(executable_path='/usr/local/bin/phantomjs',service_args=service_args)
 # driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver',service_args=service_args)
 # driver.set_window_size(1920, 1080)
@@ -51,8 +44,8 @@ if __name__ == '__main__':
     # youtubeUrl = "www.youtube.com/watch?v=rBJ2OSWFKkA";
     # m = re.match(MyYoutubeExtractor._VALID_URL, youtubeUrl, re.VERBOSE)
     # print m
-    print  jsonpickle.decode("asdasdasd",keys=True)
 
+    print os.stat("/media/video/2017/6/22/videoplayback123456789asdfhfgfggsdsdsd.3gp")
     dbx = dropbox.Dropbox('pIR-KPDmuyAAAAAAAAAAETOCjOuDKXGZwqnK8giZ3TQJxEvLMiTD8BYhAb6ptysT')
     for entry in dbx.files_list_folder('').entries:
         print(entry.name)
