@@ -1691,13 +1691,6 @@ class MyYoutubeExtractor(InfoExtractor):
         wformats = []
         for d  in dic['formats']:
             if not (int(d['format_id']) >78):
-                # url = d['url'];
-                # if self.useproxy:
-                #     response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
-                # else:
-                #      response = requests.head(url)
-                # d['filesize']  =  float(response.headers['Content-Length'])
-                # print "========================"+str(response.headers['Content-Length'])
                 wformats.append(d)
         audio_formats = [ f for f in dic['formats']
             if f.get('vcodec') == 'none']

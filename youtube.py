@@ -149,12 +149,25 @@ def convertStatus():
     imeilires.res = {"errMsg":"没有task"}
     return
 
-@app.route('/record/<vid>/',methods = ['GET', 'POST'])
-def record(vid):
+@app.route('/record/<vid>/<tasktype>/<formatid>/',methods = ['GET', 'POST'])
+def record(vid,tasktype,formatid):
     if vid:
         #判断数据库里面有没有
         try:
-            tasksCursor = YoutubeDownloadTask.objects.raw({"vid":vid,"status":{"$gte":int(YoutubeTaskStatus.convertdone)}})
+            expectstatus = YoutubeTaskStatus.convertdone
+            def RepresentsInt(s):
+                try:
+                    int(s)
+                    return True
+                except ValueError:
+                    return False
+            if RepresentsInt(tasktype):
+                tasktype = int(tasktype)
+            else:
+                abort(400)
+            if tasktype == int(YoutubeDownloadTaskType.normal):
+                expectstatus = YoutubeTaskStatus.downloadDone
+            tasksCursor = YoutubeDownloadTask.objects.raw({"vid":vid,"status":{"$gte":int(expectstatus)}})
             tasks = list(tasksCursor);
             task = None
             for itask in tasks:
@@ -174,7 +187,7 @@ def record(vid):
             vdic = json.loads(vdicstr)
             info = vdic["info"];
             if info:
-               task =  startRecord(vid,info)
+               task =  startRecord(vid,info,tasktype,formatid)
                if task:
                    return render_template("record1080P.html",taskid = task._id)
         else:
@@ -184,7 +197,7 @@ def record(vid):
             if vurl:
                 g_redis.set(vid, json.dumps({"info": vurl}))
                 g_redis.expire(vid, 3600)
-                task = startRecord(vid,vurl)
+                task = startRecord(vid,vurl,tasktype,formatid)
                 if task:
                     return render_template("record1080P.html",taskid =  task._id)
     return render_template('record1080P.html',taskid="no taskid")
@@ -195,14 +208,14 @@ def request_wants_json():
     return best == 'application/json' and request.accept_mimetypes[best] > request.accept_mimetypes['text/html']
 
 def requestVal(key):
-
         if request.values:
             return  request.values[key]
         else:
             if request.data:
                 str = request.data;
-                json = jsonpickle.decode(str)
-                return  json[key]
+                ijson = jsonpickle.decode(str)
+                print ijson
+                return  ijson[key]
             else:
                 return  request.json[key]
 
@@ -264,64 +277,150 @@ def cleandownload():
             return e.message
     return "success"
 
-# @app.route('/record1080/',methods = ['GET', 'POST'])
-# def record1080():
-#     vid = request.form['vid'];
-#     imeilires = Imeili100Result()
-#     if vid:
-#         #判断数据库里面有没有
-#
-#         try:
-#             #,"$gt":
-#             task = YoutubeDownloadTask.objects.get({"vid":vid})
-#         except YoutubeDownloadTask.DoesNotExist:
-#             task = None
-#         if task and task > YoutubeTaskStatus.error :
-#
-#             imeilires.res = task
-#             imeilires.status = int(Imeili100ResultStatus.ok);
-#             return jsonpickle.encode(imeilires,unpicklable=False)
-#
-#         vdicstr = g_redis.get(vid)
-#         if vdicstr:
-#             vdic = json.loads(vdicstr)
-#             info = vdic["info"];
-#             if info:
-#                task =  startRecord(vid,info)
-#                if task:
-#                    imeilires.res = task
-#                    imeilires.status = int(Imeili100ResultStatus.ok);
-#                    return jsonpickle.encode(imeilires,unpicklable=False)
-#         else:
-#             youtubeUrl = "https://www.youtube.com/watch?v=" + vid
-#             vurl = extractor.extractVideo(youtubeUrl)
-#             if vurl:
-#                 g_redis.set(vid, json.dumps({"info": vurl}))
-#                 g_redis.expire(vid, 3600)
-#                 task = startRecord(vid,vurl)
-#                 if task:
-#                     imeilires.res = task
-#                     imeilires.status = int(Imeili100ResultStatus.ok);
-#                     return jsonpickle.encode(imeilires,unpicklable=False)
-#     imeilires.status = int(Imeili100ResultStatus.failed);
-#     imeilires.res = {"errMsg":"error"}
-#     return jsonpickle.encode(imeilires,unpicklable=False)
 
-def startRecord(vid,vinfo):
-    betstaudio = vinfo['best_audio'];
-    betstvideo = vinfo['best_video'];
-    if betstaudio and betstvideo:
-        # 存储task
-        task = YoutubeDownloadTask(type=YoutubeDownloadTaskType.merge1080P, status=int(YoutubeTaskStatus.init),
-                                   vid=vid,videoInfo = jsonpickle.encode(vinfo)).save()
-        # Start new Threads
-        videoDownload = preparedownload(vid, int(YoutubeFileType.video), betstvideo['url'], betstvideo['ext'], task,format=jsonpickle.encode(betstvideo))
-        audioDownload = preparedownload(vid, int(YoutubeFileType.audio), betstaudio['url'], betstaudio['ext'], task,format=jsonpickle.encode(betstaudio))
-        thread1 = DownloadYoutubeThread(videoDownload)
-        thread2 = DownloadYoutubeThread(audioDownload)
-        thread1.start()
-        thread2.start()
-        return task
+@app.route('/fetchTask/',methods = ['GET', 'POST'])
+def fetchTask():
+    vid = requestVal('vid')
+    format_id = requestVal('format_id')
+    tasktype = requestVal('tasktype')
+    imeilires = Imeili100Result()
+    if vid:
+        vdicstr = g_redis.get(vid)
+        if vdicstr:
+            vdic = json.loads(vdicstr)
+            info = vdic["info"];
+            if info:
+                res = createTask(vid,info,format_id,tasktype)
+                task = None;
+                if res['task']:
+                    task = res['task']
+                    task.videoInfo = jsonpickle.decode(task.videoInfo)
+                    res['task'] = task
+                if res['downloadata']:
+                    downloadatas = res['downloadata']
+                    lastdownloads = []
+                    for download in downloadatas:
+                        download.format = jsonpickle.decode(download.format)
+                        download.task = str(task._id)
+                        lastdownloads.append(download)
+                    res['downloadata'] = lastdownloads
+                imeilires.status = int(Imeili100ResultStatus.ok);
+                imeilires.res = res
+                return jsonresponse(imeilires)
+        youtubeUrl = "https://www.youtube.com/watch?v=" + vid
+        vurl = extractor.extractVideo(youtubeUrl)
+        if vurl:
+            g_redis.set(vid, json.dumps({"info": vurl}))
+            g_redis.expire(vid, 3600)
+            res = createTask(vid, vurl, format_id, tasktype)
+            if res['task']:
+                task = res['task']
+                task.videoInfo = jsonpickle.decode(task.videoInfo)
+                res['task'] = task
+            if res['downloadata']:
+                downloadata = res['downloadata']
+                downloadata.format = jsonpickle.decode(downloadata.format)
+                res['downloadata'] = downloadata
+            imeilires.status = int(Imeili100ResultStatus.ok);
+            imeilires.res = res
+            return jsonresponse(imeilires)
+    imeilires.status = Imeili100ResultStatus.failed;
+    imeilires.res = {"errMsg":"error"}
+    return jsonresponse(imeilires)
+
+def createTask(vid,info,format_id,tasktype):
+    if tasktype == YoutubeDownloadTaskType.merge1080P:
+        betstaudio = info['best_audio'];
+        betstvideo = info['best_video'];
+        if betstaudio and betstvideo:
+            # 存储task
+            task = YoutubeDownloadTask(type=YoutubeDownloadTaskType.merge1080P, status=int(YoutubeTaskStatus.init),
+                                       vid=vid, videoInfo=jsonpickle.encode(info)).save()
+            # Start new Threads
+            videoDownload = preparedownload(vid, int(YoutubeFileType.video), betstvideo['url'], betstvideo['ext'], task,
+                                            format=jsonpickle.encode(betstvideo))
+            audioDownload = preparedownload(vid, int(YoutubeFileType.audio), betstaudio['url'], betstaudio['ext'], task,
+                                            format=jsonpickle.encode(betstaudio))
+            return {'task':task,"downloadata":[videoDownload,audioDownload]}
+        return None
+    else:
+        tempFormats = info['video_formats']+info['audio_formats'] + info['formats'];
+        downloadFormat = None
+        for format in tempFormats:
+            if format['format_id'] == format_id :
+                downloadFormat = format
+                break;
+        if downloadFormat != None:
+            if tasktype <= YoutubeDownloadTaskType.normal and tasktype>YoutubeDownloadTaskType.unknow:
+
+                task = YoutubeDownloadTask(type=tasktype, status=int(YoutubeTaskStatus.init),
+                                       vid=vid, videoInfo=jsonpickle.encode(info)).save()
+                videoDownload = preparedownload(vid, int(YoutubeFileType.video), downloadFormat['url'], downloadFormat['ext'],
+                                                task,
+                                                format=jsonpickle.encode(downloadFormat))
+                return {'task':task,"downloadata":[videoDownload]}
+            else:
+                return None
+        else:
+            return  None
+    return None
+
+    vdicstr = g_redis.get(vid)
+    if vdicstr:
+        vdic = json.loads(vdicstr)
+        info = vdic["info"];
+        if info:
+            task = startRecord(vid, info)
+
+    else:
+        # 获取info 创建task
+        youtubeUrl = "https://www.youtube.com/watch?v=" + vid
+        vurl = extractor.extractVideo(youtubeUrl)
+        if vurl:
+            g_redis.set(vid, json.dumps({"info": vurl}))
+            g_redis.expire(vid, 3600)
+            task = startRecord(vid, vurl)
+            if task:
+                return render_template("record1080P.html", taskid=task._id)
+
+def startRecord(vid,vinfo,tasktype,formatId):
+    if tasktype == int(YoutubeDownloadTaskType.merge1080P):
+        betstaudio = vinfo['best_audio'];
+        betstvideo = vinfo['best_video'];
+        if betstaudio and betstvideo:
+            # 存储task
+            task = YoutubeDownloadTask(type=YoutubeDownloadTaskType.merge1080P, status=int(YoutubeTaskStatus.init),
+                                       vid=vid,videoInfo = jsonpickle.encode(vinfo)).save()
+            # Start new Threads
+            videoDownload = preparedownload(vid, int(YoutubeFileType.video), betstvideo['url'], betstvideo['ext'], task,format=jsonpickle.encode(betstvideo))
+            audioDownload = preparedownload(vid, int(YoutubeFileType.audio), betstaudio['url'], betstaudio['ext'], task,format=jsonpickle.encode(betstaudio))
+            thread1 = DownloadYoutubeThread(videoDownload)
+            thread2 = DownloadYoutubeThread(audioDownload)
+            thread1.start()
+            thread2.start()
+            g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
+            g_redis.expire(task._id, 3600)
+            return task
+    elif tasktype == int(YoutubeDownloadTaskType.normal):
+        formats = vinfo['formats']
+        selectVideo = None
+        for format in formats:
+            if format['format_id'] == formatId:
+                selectVideo = format
+                break;
+        if selectVideo:
+            # 存储task
+            task = YoutubeDownloadTask(type=YoutubeDownloadTaskType.normal, status=int(YoutubeTaskStatus.init),
+                                       vid=vid,videoInfo = jsonpickle.encode(vinfo)).save()
+            # Start new Threads
+            videoDownload = preparedownload(vid, int(YoutubeFileType.mix), selectVideo['url'], selectVideo['ext'], task,format=jsonpickle.encode(selectVideo))
+            task.resultfilepath =   videoDownload.filestorepath
+            task.save()
+            thread1 = DownloadYoutubeThread(videoDownload)
+            thread1.start()
+            g_redis.set(task._id, jsonpickle.encode(task, unpicklable=False))
+            g_redis.expire(task._id, 3600)
+            return task
     return None
 
 
@@ -355,7 +454,7 @@ def preparedownload(vid,type,url,ext,task,format=""):
         response = requests.head(url,proxies={"http":"http://127.0.0.1:8118","https":"https://127.0.0.1:8118"})
     else:
         response = requests.head(url)
-    contentlength = response.headers['Content-Length']
+    contentlength = 0
     downloaddata =  YoutubeFileDownloadData(filestorepath = filepath,contentlength = contentlength,filetype = type,downloadStatus = int(YoutubeDownloadStatus.init),url=url,ext=ext,task=task,format=format).save()
     return downloaddata
 
@@ -380,17 +479,42 @@ def downloadProgress():
                     imeilires.status = int(Imeili100ResultStatus.failed)
                     imeilires.res = {"errMsg": "task is error"};
                     return jsonresponse(imeilires)
-                if videofile.downloadStatus >= YoutubeDownloadStatus.done  and videofile.downloadStatus >= YoutubeDownloadStatus.done:
+                elif videofile.downloadStatus >= YoutubeDownloadStatus.done  and audiofile.downloadStatus >= YoutubeDownloadStatus.done:
                     imeilires.status = int(Imeili100ResultStatus.ok)
                     imeilires.res = {"progress": 1};
                     return jsonresponse(imeilires)
-                elif videofile.downloadStatus == YoutubeDownloadStatus.error or videofile.downloadStatus == YoutubeDownloadStatus.error:
+                elif videofile.downloadStatus == YoutubeDownloadStatus.error or audiofile.downloadStatus == YoutubeDownloadStatus.error:
                     imeilires.status = int(Imeili100ResultStatus.failed)
                     imeilires.res = {"errMsg": "task is error"};
                     return jsonresponse(imeilires)
                 else:
                     totle = videofile.contentlength + audiofile.contentlength
                     savedBytes = os.path.getsize(tmpstorepath+videofile.filestorepath) + os.path.getsize(tmpstorepath+audiofile.filestorepath)
+                    try:
+                        progress = float("{0:.2f}".format(float(savedBytes)/float(totle)))
+                    except Exception as e:
+                        progress = 0 ;
+                    imeilires.status = int(Imeili100ResultStatus.ok)
+                    imeilires.res = {"progress": progress};
+                    return jsonresponse(imeilires)
+            else:
+                videofile = (
+                YoutubeFileDownloadData.objects.get({"task": ObjectId(taskid), "filetype": int(YoutubeFileType.mix)}))
+                if videofile is None or videofile.downloadStatus == int(YoutubeDownloadStatus.error):
+                    imeilires.status = int(Imeili100ResultStatus.failed)
+                    imeilires.res = {"errMsg": "task is error"};
+                    return jsonresponse(imeilires)
+                elif videofile.downloadStatus >= YoutubeDownloadStatus.done  :
+                    imeilires.status = int(Imeili100ResultStatus.ok)
+                    imeilires.res = {"progress": 1};
+                    return jsonresponse(imeilires)
+                elif videofile.downloadStatus == YoutubeDownloadStatus.error :
+                    imeilires.status = int(Imeili100ResultStatus.failed)
+                    imeilires.res = {"errMsg": "task is error"};
+                    return jsonresponse(imeilires)
+                else:
+                    totle = videofile.contentlength
+                    savedBytes = os.path.getsize(tmpstorepath+videofile.filestorepath)
                     try:
                         progress = float("{0:.2f}".format(float(savedBytes)/float(totle)))
                     except Exception as e:
@@ -452,7 +576,8 @@ def downloadtask():
             task = YoutubeDownloadTask.objects.get({"_id": ObjectId(taskid)})
         except YoutubeDownloadTask.DoesNotExist:
             abort(404)
-        if task and task.status > YoutubeTaskStatus.converterror:
+
+        if task  and    ((task.type != YoutubeDownloadTaskType.merge1080P and task.status>= YoutubeTaskStatus.downloadDone) or  (task.type == YoutubeDownloadTaskType.merge1080P and task.status > YoutubeTaskStatus.converterror)):
 
             vid = task.vid;
             file_basename = "download.mp4"
@@ -464,7 +589,7 @@ def downloadtask():
             # 全部下载完毕
             videofile = None
             for data in files:
-                if data.filetype == int(YoutubeFileType.video):
+                if data.filetype == int(YoutubeFileType.video) or data.filetype == int(YoutubeFileType.mix):
                     videofile = data
                     break
 
@@ -477,15 +602,14 @@ def downloadtask():
                         except Exception as e:
                             title = "download"
                     file_basename = title+"." + videofile.ext;
-
-            response = make_response()
-            response.headers['Content-Description'] = 'File Transfer'
-            response.headers['Cache-Control'] = 'no-cache'
-            response.headers['Content-Type'] = 'application/octet-stream'
-            response.headers['Content-Disposition'] = "attachment; filename='%s'" % unidecode(file_basename)
-            response.headers['Content-Length'] = file_size
-            response.headers['X-Accel-Redirect'] = '/downloadvideo/'+server_path  # nginx: http://wiki.nginx.org/NginxXSendfile
-            return response
+                    response = make_response()
+                    response.headers['Content-Description'] = 'File Transfer'
+                    response.headers['Cache-Control'] = 'no-cache'
+                    response.headers['Content-Type'] = 'application/octet-stream'
+                    response.headers['Content-Disposition'] = "attachment; filename='%s'" % unidecode(file_basename)
+                    response.headers['Content-Length'] = file_size
+                    response.headers['X-Accel-Redirect'] = '/downloadvideo/'+server_path  # nginx: http://wiki.nginx.org/NginxXSendfile
+                    return response
             return redirect(("/" + task.resultfilepath), code=302)
         taskjsonstr = g_redis.get(taskid)
         if taskjsonstr:
@@ -537,6 +661,10 @@ def convertProgress():
         except YoutubeDownloadTask.DoesNotExist:
             imeilires.status = int(Imeili100ResultStatus.failed)
             imeilires.res = {"errMsg": "task is error"};
+            return jsonresponse(imeilires)
+        if task.type != int(YoutubeDownloadTaskType.merge1080P):
+            imeilires.status = int(Imeili100ResultStatus.ok)
+            imeilires.res = {"progress": 100};
             return jsonresponse(imeilires)
         if task.status > YoutubeTaskStatus.converterror:
             imeilires.status = int(Imeili100ResultStatus.ok)
@@ -653,7 +781,11 @@ def download(downloaddata):
         downloaddata.downloadStatus = int(YoutubeDownloadStatus.done)
         downloaddata.save()
         print "download done====================" + downloaddata.filestorepath
-        startconvert(downloaddata)
+        if task.type == int(YoutubeDownloadTaskType.merge1080P):
+            startconvert(downloaddata)
+        else:
+            task.status = int(YoutubeTaskStatus.downloadDone)
+            task.save()
     except pycurl.error,e:
         print "Posting to %s resulted in error: %s" % (url, e)
         downloaddata.downloadStatus = int(YoutubeDownloadStatus.error)
@@ -719,6 +851,7 @@ def upload2DropBox(task):
             except Exception as e:
                 task.type = YoutubeTaskStatus.dropboxerror
                 task.save()
+
 
 def startconvert(downloaddata):
 

@@ -209,23 +209,27 @@ function parseURL(url) {
             var href = $(this).attr('href');
             if (href.indexOf("record1080") != -1)
             {
-                record1080();
+                record1080(3,bestvideo['format_id']);
                 ga('send', 'event', 'Videos', 'Download', "1080",vid);
                 return;
+            }else{
+                var index = $('.radio input:checked').val();
+                format = formats[index];
+                record1080(4,format['format_id'])
             }
             ga('send', 'event', 'Videos', 'Download', selectedFormat,vid);
-            location.href = href;
+//            location.href = href;
         })
 
 
-        function record1080()
+        function record1080(tasktype,format_id)
         {
             if(vid == "" || !vid)
             {
                 alert("Invalid youtube link");
                 return;
             }
-              window.open("/record/"+vid+"/", '_blank');
+              window.open("/record/"+vid+"/"+tasktype+"/"+format_id+"/", '_blank');
 
         }
 

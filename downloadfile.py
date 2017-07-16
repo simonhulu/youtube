@@ -5,11 +5,12 @@ from pymongo.operations import IndexModel
 from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
 connect('mongodb://localhost:27017/youtube')
 class YoutubeFileType(IntEnum):
-       unknow, video,audio = range(3)
+    #unknow type ,only video data,only audio data,video and audio data
+       unknow, video,audio,mix = range(4)
 
 
 class YoutubeDownloadTaskType(IntEnum):
-    unknow, onlyVideo, onlyAudio,merge1080P = range(4)
+    unknow, onlyVideo, onlyAudio,merge1080P,normal = range(5)
 
 class YoutubeDownloadStatus(IntEnum):
     unknow,error, init, start,downloading,done,discard = range(7)
@@ -45,7 +46,10 @@ class YoutubeFileDownloadData(MongoModel):
     url = fields.CharField(required=True)
     ext = fields.CharField(required=True)
     format = fields.CharField(required=False)
+    progress = fields.IntegerField()
     task = fields.ReferenceField(YoutubeDownloadTask,required=True)
+
+
 
     class Meta:
         collection_name = "youtube_downloadfile"
