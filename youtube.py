@@ -116,6 +116,11 @@ def set_language(language=None):
         session['language'] = language
 
     return redirect("/", code=302)
+@app.route('/downloadpage/')
+def downloadpage(language=None):
+
+
+    return render_template('downloadpage.html')
 
 @app.route('/')
 def hello_world():
