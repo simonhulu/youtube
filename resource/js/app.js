@@ -234,7 +234,6 @@ function parseURL(url) {
 
         }
 
-
         function subtitledownload(){
 //            var subtitle = subtitles[0];
 //            var subtitleurl = subtitle['url'];
