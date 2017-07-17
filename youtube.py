@@ -117,7 +117,7 @@ def set_language(language=None):
 
     return redirect("/", code=302)
 @app.route('/downloadpage/')
-def downloadpage(language=None):
+def downloadpage():
 
 
     return render_template('downloadpage.html')
