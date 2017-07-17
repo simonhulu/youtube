@@ -216,10 +216,10 @@ function parseURL(url) {
                 var index = $('.radio input:checked').val();
                 format = formats[index];
                 ga('send', 'event', 'Videos', 'Download', selectedFormat,vid);
-                record1080(4,format['format_id'])
+//                record1080(4,format['format_id'])
             }
 
-//            location.href = href;
+            location.href = href;
         })
 
 
