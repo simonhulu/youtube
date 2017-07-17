@@ -937,6 +937,8 @@ class DownloadYoutubeThread (threading.Thread):
 
 
 if __name__ == '__main__':
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['SECRET_KEY'] =  os.urandom(24)
     app.secret_key = '123456789'
     app.run(host='0.0.0.0',debug=app.config['DEBUG'])
 
