@@ -2,6 +2,7 @@
 from flask import Flask,Response,send_file,make_response
 from flask import g,request,session
 from flask import render_template
+from flask import  Session
 from functools import wraps
 import youtube_dl
 from flask import jsonify
@@ -37,6 +38,8 @@ except NameError:
     compat_str = str
 NO_DEFAULT = object()
 app = Flask(__name__)
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = os.urandom(24)
 app.config.from_object("config")
 babel = Babel(app)
 dbx = dropbox.Dropbox('pIR-KPDmuyAAAAAAAAAAETOCjOuDKXGZwqnK8giZ3TQJxEvLMiTD8BYhAb6ptysT')
@@ -937,9 +940,8 @@ class DownloadYoutubeThread (threading.Thread):
 
 
 if __name__ == '__main__':
-    app.config['SESSION_TYPE'] = 'filesystem'
-    app.config['SECRET_KEY'] =  os.urandom(24)
-    app.secret_key = '123456789'
+
+
     app.run(host='0.0.0.0',debug=app.config['DEBUG'])
 
 
