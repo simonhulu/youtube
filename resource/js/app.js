@@ -37,7 +37,6 @@ function parseURL(url) {
         var bestaudio;
         var bestvideo;
 
-
         function parseVidurl(videoId)
         {
             if(videoId == "" || !videoId)

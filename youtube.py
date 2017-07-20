@@ -127,6 +127,10 @@ def hello_world():
     if lang == "zh":
         return redirect("/cn/", code=302)
     return render_template('youtubescreenshot.html')
+@app.route('/statement/')
+def statement():
+
+    return render_template('statement.html')
 @app.route('/feedback')
 def feedbackpage():
     return render_template('community.html')

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">网站声明</h5>
+        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+          <!--<span aria-hidden="true">&times;</span>-->
+        <!--</button>-->
+      </div>
+      <div class="modal-body">
+        责任声明
+          <p>1.本网站仅用于交流和学习使用，不得使用本网站提供的服务和内容从事违反国家法律的行为。</p>
+         <p>3.凡以任何方式登陆本网站或直接、间接使用本网站资料者，视为自愿接受本网站声明的约束。</p>
+          <p>4.本声明未涉及的问题参见国家有关法律法规，当本声明与国家法律法规冲突时，以国家法律法规为准。</p>
+          <p>5.本网站如无意中侵犯了哪个媒体或个人的知识产权，请来信或来电告之，本网站将立即给予删除。</p>
+          <p>6.本站坚决反对任何形式的违反浏览者所在国或地区法律的网络犯罪活动！</p>
+          <p>7.使用本站资源请遵守网友所在地的法律法规，勿违反网友所在国家的法律法规！仅供作为技术交流与提升等用途！</p>
+          <p>8.请务必遵守国家法律法规，具体传播者、使用者的一切意向，言行，用途和由此造成的任何结果，由该传播者和使用者自行负责！</p>
+          <p>9.本网站使用者因为违反本声明的规定而触犯中华人民共和国法律的，一切后果自己负责，本网站不承担任何责任。</p>
+          <p>10.如果本声明中的无论因何种原因完全或部分无效或不具有执行力，或违反任何适用的法律，则该条款被视为删除，但本声明总体仍应有效并且有约束力！</p>
+          <p>11.本站有权随时根据有关法律、法规的变化等修改本声明。修改后的声明会进行更新，并会随附于发布的资源下方。当发生有关争议，以最新的声明为准。</p>
+          <p>12.本站在法律允许最大范围内对本声明拥有解释权与修改权。如果真的有敏感资源或不合适的内容，本站将积极配合有关执法部门检查及整改！请负责人联系本站删除</p>
+          <p>13.使用本网站意味着您同意以上条款</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closetatementBtn" class="btn btn-primary">本人同意并遵守</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/jquery.min.js"></script>
+<script>
+        // 写cookie
+    function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            var expires = "expires="+d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires +";path=/";
+    }
+        // 读cookie
+    function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+            }
+            return "";
+    }
+    function isNewVisitor() {
+            // 从cookie读取“已经向访客提示过消息”的标志位
+            var flg = getCookie("ccphome-visited");
+            if (flg === "") {
+                return true;
+            } else {
+                return false;
+            }
+    }
+    $(document).ready(function(){
+            var newVisitor = isNewVisitor();// 如果是新访客
+            if(newVisitor === true)
+            {
+              $("#exampleModalLong").modal();
+              // 标记：已经向该访客弹出过消息。30天之内不要再弹
+              setCookie("ccphome-visited","true", 5);
+            }
+
+             $("#closetatementBtn").click(function(){
+                $("#exampleModalLong").modal('hide');
+            });
+        }
+    );
+</script>
+</body>
+</html>
